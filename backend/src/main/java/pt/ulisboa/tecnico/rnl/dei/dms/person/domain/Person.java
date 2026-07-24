@@ -4,7 +4,7 @@ package pt.ulisboa.tecnico.rnl.dei.dms.person.domain;
 import jakarta.persistence.*;
 
 import lombok.Data;
-import pt.ulisboa.tecnico.rnl.dei.dms.person.dto.PersonDto;
+import pt.ulisboa.tecnico.rnl.dei.dms.person.dto.CreatePersonDto;
 
 // Domain class representing a person in the system
 @Data
@@ -34,23 +34,24 @@ public class Person {
 	@Enumerated(EnumType.STRING)
     private PersonType type;
 
+	@Column(name = "email", nullable = false, unique = true)
+	private String email;
 
-	// TODO: maybe add more fields? ...or maybe not? what makes sense here?
+	@Column(name = "password", nullable = false)
+	private String password;
 
 	protected Person() {
 	}
 
-	public Person(String name, String istId, PersonType type) {
+	public Person(String name, String istId, PersonType type, String email, String encodedPassword) {
 		this.name = name;
 		this.istId = istId;
 		this.type = type;
+		this.email = email;
+		this.password = encodedPassword;
 	}
 
-	public Person(PersonDto personDto) {
-		this(personDto.name(), personDto.istId(),
-				PersonType.valueOf(personDto.type().toUpperCase()));
-		System.out.println("PersonDto: " + personDto);
-		System.out.println("PersonType: " + personDto.type());
-
+	public Person(CreatePersonDto dto, String encodedPassword) {
+		this(dto.name(), dto.istId(), dto.type(), dto.email(), encodedPassword);
 	}
 }

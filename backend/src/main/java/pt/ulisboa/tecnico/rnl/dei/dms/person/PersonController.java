@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import pt.ulisboa.tecnico.rnl.dei.dms.person.dto.CreatePersonDto;
 import pt.ulisboa.tecnico.rnl.dei.dms.person.dto.PersonDto;
 import pt.ulisboa.tecnico.rnl.dei.dms.person.service.PersonService;
 
@@ -25,7 +26,7 @@ public class PersonController {
 	}
 
 	@PostMapping("/people")
-	public PersonDto createPerson(@RequestBody PersonDto personDto) {
+	public PersonDto createPerson(@RequestBody CreatePersonDto personDto) {
 		return personService.createPerson(personDto);
 	}
 

@@ -3,9 +3,9 @@ package pt.ulisboa.tecnico.rnl.dei.dms.person.dto;
 import pt.ulisboa.tecnico.rnl.dei.dms.person.domain.Person;
 
 // Data Transfer Object, to communicate with frontend
-public record PersonDto(long id, String name, String istId, String type) {
+public record PersonDto(long id, String name, String istId, String type, String email) {
 	public PersonDto(Person person) {
 		this(person.getId(), person.getName(), person.getIstId(),
-				person.getType().toString());
+				person.getType().toString(), person.getEmail());
 	}
 }
