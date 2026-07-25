@@ -63,7 +63,7 @@ public class PersonService {
 
 	@Transactional
 	public void deletePerson(long id) {
-		fetchPersonOrThrow(id); // ensure exists
+		fetchPersonOrThrow(id); // ensure it exists
 
 		personRepository.deleteById(id);
 	}
