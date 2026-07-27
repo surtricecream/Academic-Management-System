@@ -91,3 +91,11 @@ In order to access the database, you can use the following command (if you're us
 ```bash
 psql -h localhost -p <PORT> -U <USER> <DB_NAME>
 ```
+
+## Features Implemented
+
+### Authentication
+- JWT-based login: `POST /auth/login` with email + password, returns a signed token
+- Passwords hashed with BCrypt (`Person.password` never exposed via API — see `PersonDto` vs `CreatePersonDto` split)
+- `JwtAuthFilter` validates the `Authorization: Bearer <token>` header on protected routes and populates Spring Security's context with the authenticated user's identity and role
+- `POST /people` is currently open/unauthenticated to avoid a bootstrapping problem (can't create the first account if creation itself requires login); revisit once an initial Admin is seeded via `populate.sql`
