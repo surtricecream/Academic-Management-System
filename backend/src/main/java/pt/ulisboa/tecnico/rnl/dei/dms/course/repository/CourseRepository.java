@@ -9,6 +9,4 @@ import pt.ulisboa.tecnico.rnl.dei.dms.course.domain.Course;
 // Repository interface for managing Course entities
 @Repository
 @Transactional
-public interface CourseRepository extends JpaRepository<Course, Long>{
-        
-} 
+public interface CourseRepository extends JpaRepository<Course, Long> {} 

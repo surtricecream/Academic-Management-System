@@ -23,8 +23,7 @@ public class Course {
 	@Column(name = "duration_Years", nullable = false)
 	private Integer durationYears;
 
-    protected Course() {
-    }
+    protected Course() {}
 
     public Course(String code, String name, Integer durationYears) {
         this.code = code;

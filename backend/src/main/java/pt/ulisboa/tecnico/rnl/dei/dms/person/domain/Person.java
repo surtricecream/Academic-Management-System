@@ -40,8 +40,7 @@ public class Person {
 	@Column(name = "password", nullable = false)
 	private String password;
 
-	protected Person() {
-	}
+	protected Person() {}
 
 	public Person(String name, String istId, PersonType type, String email, String encodedPassword) {
 		this.name = name;
