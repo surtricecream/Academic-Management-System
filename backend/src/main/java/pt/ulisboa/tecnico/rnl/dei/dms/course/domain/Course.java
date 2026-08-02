@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.rnl.dei.dms.course.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import pt.ulisboa.tecnico.rnl.dei.dms.course.dto.CourseDto;
 
 // Domain class representing a course in the system
 @Data
@@ -29,6 +30,10 @@ public class Course {
         this.code = code;
         this.name = name;
         this.durationYears = durationYears;
+    }
+
+    public Course(CourseDto dto) {
+        this(dto.code(), dto.name(), dto.durationYears());
     }
     
 }
