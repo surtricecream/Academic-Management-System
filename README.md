@@ -99,3 +99,9 @@ psql -h localhost -p <PORT> -U <USER> <DB_NAME>
 - Passwords hashed with BCrypt (`Person.password` never exposed via API — see `PersonDto` vs `CreatePersonDto` split)
 - `JwtAuthFilter` validates the `Authorization: Bearer <token>` header on protected routes and populates Spring Security's context with the authenticated user's identity and role
 - `POST /people` is currently open/unauthenticated to avoid a bootstrapping problem (can't create the first account if creation itself requires login); revisit once an initial Admin is seeded via `populate.sql`
+
+### Courses & UCs
+- Full CRUD for `Course` (`/courses`) and `Uc` (`/ucs`)
+- A UC has one Regente (`MAIN_TEACHER`) and belongs to one or more Courses (many-to-many)
+- Creating/updating a UC validates that the assigned regente is actually a `MAIN_TEACHER`
+- Creating, updating, and deleting UCs is restricted to Administrators (`@PreAuthorize`); viewing is open to any authenticated user
