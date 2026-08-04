@@ -8,7 +8,10 @@ public enum ErrorMessage {
 	PERSON_NAME_NOT_VALID("O nome da pessoa especificado não é válido.", 1004),
 	PERSON_ALREADY_EXISTS("Já existe uma pessoa com o ID %s", 1005),
 	INVALID_CREDENTIALS("Email ou password inválidos.", 1006),
-	INVALID_REGENTE("A pessoa especificada não é um professor regente.", 1007);
+	INVALID_REGENTE("A pessoa especificada não é um professor regente.", 1007),
+	NOT_AUTHORIZED("Não está autorizado a executar esta operação.", 1008),
+	MEMBERSHIP_ALREADY_EXISTS("A pessoa %s já é membro desta UC.", 1009),
+	NO_SUCH_MEMBERSHIP("A pessoa %s não é membro desta UC.", 1010);
 
 	private final String label;
 	private final int code;
