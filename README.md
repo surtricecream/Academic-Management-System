@@ -105,3 +105,8 @@ psql -h localhost -p <PORT> -U <USER> <DB_NAME>
 - A UC has one Regente (`MAIN_TEACHER`) and belongs to one or more Courses (many-to-many)
 - Creating/updating a UC validates that the assigned regente is actually a `MAIN_TEACHER`
 - Creating, updating, and deleting UCs is restricted to Administrators (`@PreAuthorize`); viewing is open to any authenticated user
+
+### UC Membership
+- Regente (or Admin) can add/remove Alunos and Assistentes for their UC (`/ucs/{ucId}/members`)
+- Authorization is ownership-based: only the UC's actual Regente or an Administrator can manage its members, not just any teacher
+- Duplicate memberships are rejected; viewing members is open to any authenticated user
