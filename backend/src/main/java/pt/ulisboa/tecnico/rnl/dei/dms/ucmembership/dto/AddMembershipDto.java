@@ -1,5 +1,3 @@
 package pt.ulisboa.tecnico.rnl.dei.dms.ucmembership.dto;
 
-public class AddMembershipDto {
-    
-}
+public record AddMembershipDto(long person_id, String role) {}
