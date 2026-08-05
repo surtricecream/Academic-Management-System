@@ -11,7 +11,8 @@ public enum ErrorMessage {
 	INVALID_REGENTE("A pessoa especificada não é um professor regente.", 1007),
 	NOT_AUTHORIZED("Não está autorizado a executar esta operação.", 1008),
 	MEMBERSHIP_ALREADY_EXISTS("A pessoa %s já é membro desta UC.", 1009),
-	NO_SUCH_MEMBERSHIP("A pessoa %s não é membro desta UC.", 1010);
+	NO_SUCH_MEMBERSHIP("A pessoa %s não é membro desta UC.", 1010),
+	NO_SUCH_TEST("Não existe nenhum teste com o ID %s", 1011);
 
 	private final String label;
 	private final int code;

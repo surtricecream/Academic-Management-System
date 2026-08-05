@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.security.access.AccessDeniedException;
 
 @RestControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
@@ -16,6 +17,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public DEIExceptionDto DEIException(DEIException e) {
 		return new DEIExceptionDto(e);
+	}
+
+	@ExceptionHandler(AccessDeniedException.class)
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	public DEIExceptionDto accessDenied(AccessDeniedException e) {
+	    return new DEIExceptionDto(new DEIException(ErrorMessage.NOT_AUTHORIZED));
 	}
 
 	@ExceptionHandler(Exception.class)
