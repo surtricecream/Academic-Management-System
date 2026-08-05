@@ -1,5 +1,5 @@
 package pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto;
 
-public class CreateTestDto {
-    
-}
+import java.time.LocalDate;
+
+public record CreateTestDto(String title, LocalDate date, Double weight, long ucId) {}
