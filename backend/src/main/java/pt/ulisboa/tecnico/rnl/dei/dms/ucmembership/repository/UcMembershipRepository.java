@@ -16,5 +16,7 @@ public interface UcMembershipRepository extends JpaRepository<UcMembership, Long
 
     List<UcMembership> findByUcId(Long ucId);
 
+    List<UcMembership> findByUcIdAndRole(long ucId, UcMembership.MembershipRole role);
+
     Optional<UcMembership> findByUcIdAndPersonId(Long ucId, Long personId);
 }

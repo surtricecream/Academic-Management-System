@@ -61,7 +61,7 @@ public class ProjectController {
 
     @DeleteMapping("/{projectId}")
     @PreAuthorize("hasAnyRole('MAIN_TEACHER', 'ADMINISTRATOR')")
-    public void deleteProject(@PathVariable long ucId, @PathVariable long projectId, Authentication authentication) {
+    public void deleteProject(@PathVariable long projectId, Authentication authentication) {
         Person requester = personRepository.findByEmail(authentication.getName())
             .orElseThrow(() -> new DEIException(ErrorMessage.NO_SUCH_PERSON, authentication.getName()));
         projectService.deleteProject(projectId, requester.getId());
