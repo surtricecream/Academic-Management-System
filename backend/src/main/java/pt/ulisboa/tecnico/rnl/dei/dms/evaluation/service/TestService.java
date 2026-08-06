@@ -58,16 +58,16 @@ public class TestService {
         return testRepository.findByUcId(ucId).stream().map(TestDto::new).toList();
     }
 
+    public TestDto getTest(long id) {
+        return new TestDto(fetchTestOrThrow(id));
+    }
+
     public TestDto createTest(long ucId, CreateTestDto dto, long requesterId) {
         Uc uc = fetchUcOrThrow(ucId);
         authorizeTestChange(uc, requesterId);
 
         Test test = new Test(dto.title(), dto.date(), dto.weight(), uc);
         return new TestDto(testRepository.save(test));
-    }
-
-    public TestDto getTest(long id) {
-        return new TestDto(fetchTestOrThrow(id));
     }
 
     public TestDto updateTest(long id, CreateTestDto dto, long requesterId) {
