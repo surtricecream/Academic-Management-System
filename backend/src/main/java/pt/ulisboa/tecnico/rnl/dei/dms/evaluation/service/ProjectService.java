@@ -30,6 +30,11 @@ public class ProjectService {
     @Autowired
     private PersonRepository personRepository;
 
+    private Project fetchProjectOrThrow(long id) {
+        return projectRepository.findById(id)
+            .orElseThrow(() -> new DEIException(ErrorMessage.NO_SUCH_PROJECT, Long.toString(id)));
+    }
+
     private Uc fetchUcOrThrow(long id) {
         return ucRepository.findById(id)
             .orElseThrow(() -> new DEIException(ErrorMessage.NO_SUCH_UC, Long.toString(id)));
@@ -38,11 +43,6 @@ public class ProjectService {
     private Person fetchPersonOrThrow(long id) {
         return personRepository.findById(id)
             .orElseThrow(() -> new DEIException(ErrorMessage.NO_SUCH_PERSON, Long.toString(id)));
-    }
-
-    private Project fetchProjectOrThrow(long id) {
-        return projectRepository.findById(id)
-            .orElseThrow(() -> new DEIException(ErrorMessage.NO_SUCH_PROJECT, Long.toString(id)));
     }
 
     private void authorizeProjectChange(Uc uc, long requesterId) {

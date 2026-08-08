@@ -17,7 +17,6 @@ import pt.ulisboa.tecnico.rnl.dei.dms.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.rnl.dei.dms.person.domain.Person;
 import pt.ulisboa.tecnico.rnl.dei.dms.person.repository.PersonRepository;
 
-
 @RestController
 @RequestMapping("/projects/{projectId}/groups")
 public class ProjectGroupController {
