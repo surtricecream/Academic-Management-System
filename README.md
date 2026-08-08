@@ -110,3 +110,14 @@ psql -h localhost -p <PORT> -U <USER> <DB_NAME>
 - Regente (or Admin) can add/remove Alunos and Assistentes for their UC (`/ucs/{ucId}/members`)
 - Authorization is ownership-based: only the UC's actual Regente or an Administrator can manage its members, not just any teacher
 - Duplicate memberships are rejected; viewing members is open to any authenticated user
+
+### Evaluations (Tests & Projects)
+- Tests (`/ucs/{ucId}/tests`) and Projects (`/ucs/{ucId}/projects`) are managed by the UC's Regente or an Administrator
+- Projects can be individual or group-based (`isGroupProject`), with an enforced `maxGroupSize`
+- Project groups (`/projects/{projectId}/groups`) can be created manually or auto-assigned randomly among the UC's enrolled students; auto-assignment is a one-time operation and will reject subsequent runs once groups already exist.
+
+### Grading
+- Grades can be assigned by the UC's Regente, its Assistentes, or an Administrator — a broader set of roles than evaluation creation, matching the spec's distinction between defining an evaluation and grading it
+- A grade is tied to either a Test or a Project, and either an individual student or a project group, never both — enforced in `GradeService`
+- Re-submitting a grade for the same test/person (or project/group) updates the existing grade rather than creating a duplicate
+- Scores are validated to be within 0–20
