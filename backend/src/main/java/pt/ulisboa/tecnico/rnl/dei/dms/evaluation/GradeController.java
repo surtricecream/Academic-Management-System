@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto.GradeDto;
+import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto.StudentGradesDto;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto.CreateGradeDto;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.service.GradeService;
 import pt.ulisboa.tecnico.rnl.dei.dms.exceptions.DEIException;
@@ -52,5 +53,13 @@ public class GradeController {
         
         GradeDto grade = gradeService.gradeGroupProject(projectId, dto, requester.getId());
         return ResponseEntity.ok(grade);
+    }
+
+    @GetMapping("/ucs/{ucId}/students/{personId}/grades")
+    public StudentGradesDto getStudentGrades(@PathVariable long ucId, @PathVariable long personId, Authentication authentication) {
+        Person requester = personRepository.findByEmail(authentication.getName())
+            .orElseThrow(() -> new DEIException(ErrorMessage.NO_SUCH_PERSON, authentication.getName()));
+        
+        return gradeService.getStudentGrades(ucId, personId, requester.getId());
     }
 }

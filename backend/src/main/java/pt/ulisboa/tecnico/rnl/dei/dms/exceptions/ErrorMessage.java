@@ -24,7 +24,8 @@ public enum ErrorMessage {
 	GROUP_NOT_ALLOWED("Este projeto não permite grupos", 1014),
 	GROUP_SIZE_EXCEEDED("O grupo excede o tamanho máximo permitido.", 1015),
 	GROUPS_ALREADY_EXIST("Os grupos para este projeto já estão feitos", 1019),
-	MEMBER_NOT_STUDENT("A pessoa com ID %s não é estudante desta UC.", 1017);
+	MEMBER_NOT_STUDENT("A pessoa com ID %s não é estudante desta UC.", 1017),
+	WEIGHT_BUDGET_EXCEEDED("O peso total dos elementos de avaliação não pode excede 1.0", 1024);
 
 	private final String label;
 	private final int code;

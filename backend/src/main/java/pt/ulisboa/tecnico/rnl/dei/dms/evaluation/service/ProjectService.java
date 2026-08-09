@@ -8,10 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import pt.ulisboa.tecnico.rnl.dei.dms.exceptions.DEIException;
 import pt.ulisboa.tecnico.rnl.dei.dms.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.domain.Test;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.domain.Project;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto.ProjectDto;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto.CreateProjectDto;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.repository.ProjectRepository;
+import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.repository.TestRepository;
 import pt.ulisboa.tecnico.rnl.dei.dms.uc.domain.Uc;
 import pt.ulisboa.tecnico.rnl.dei.dms.uc.repository.UcRepository;
 import pt.ulisboa.tecnico.rnl.dei.dms.person.domain.Person;
@@ -29,6 +31,9 @@ public class ProjectService {
 
     @Autowired
     private PersonRepository personRepository;
+
+    @Autowired
+    private TestRepository testRepository;
 
     private Project fetchProjectOrThrow(long id) {
         return projectRepository.findById(id)
@@ -52,6 +57,18 @@ public class ProjectService {
         }
     }
 
+    private void validateWeightBudget(Uc uc, double newWeight, Long excludeProjectId) {
+        double existingTestWeight = testRepository.findByUcId(uc.getId()).stream()
+                .mapToDouble(Test::getWeight).sum();
+        double existingProjectWeight = projectRepository.findByUcId(uc.getId()).stream()
+                .filter(p -> excludeProjectId == null || !p.getId().equals(excludeProjectId))
+                .mapToDouble(Project::getWeight).sum();
+
+        if (existingTestWeight + existingProjectWeight + newWeight > 1.0001) {
+            throw new DEIException(ErrorMessage.WEIGHT_BUDGET_EXCEEDED);
+        }
+    }
+
     public List<ProjectDto> getProjectsByUc(long ucId) {
         fetchUcOrThrow(ucId);
 
@@ -65,6 +82,7 @@ public class ProjectService {
     public ProjectDto createProject(long ucId, CreateProjectDto dto, long requesterId) {
         Uc uc = fetchUcOrThrow(ucId);
         authorizeProjectChange(uc, requesterId);
+        validateWeightBudget(uc, dto.weight(), null);
 
         if (Boolean.TRUE.equals(dto.isGroupProject()) && dto.maxGroupSize() == null) {
             throw new DEIException(ErrorMessage.INVALID_GROUP_SIZE);
@@ -83,6 +101,8 @@ public class ProjectService {
         if (!project.getUc().getId().equals(uc.getId())) {
             throw new DEIException(ErrorMessage.NO_SUCH_PROJECT);
         }
+
+        validateWeightBudget(uc, dto.weight(), id);
 
         project.setTitle(dto.title());
         project.setDeadline(dto.deadline());

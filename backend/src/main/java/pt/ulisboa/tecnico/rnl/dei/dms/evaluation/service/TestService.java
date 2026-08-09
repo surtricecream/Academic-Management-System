@@ -8,9 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import pt.ulisboa.tecnico.rnl.dei.dms.exceptions.DEIException;
 import pt.ulisboa.tecnico.rnl.dei.dms.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.domain.Project;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.domain.Test;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto.CreateTestDto;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto.TestDto;
+import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.repository.ProjectRepository;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.repository.TestRepository;
 import pt.ulisboa.tecnico.rnl.dei.dms.uc.domain.Uc;
 import pt.ulisboa.tecnico.rnl.dei.dms.uc.repository.UcRepository;
@@ -29,6 +31,9 @@ public class TestService {
 
     @Autowired
     private PersonRepository personRepository;
+
+    @Autowired
+    private ProjectRepository projectRepository;
 
     private Uc fetchUcOrThrow(long id) {
         return ucRepository.findById(id)
@@ -52,6 +57,18 @@ public class TestService {
         }
     }
 
+    private void validateWeightBudget(Uc uc, double newWeight, Long excludeTestId) {
+        double existingTestWeight = testRepository.findByUcId(uc.getId()).stream()
+                .filter(t -> excludeTestId == null || !t.getId().equals(excludeTestId))
+                .mapToDouble(Test::getWeight).sum();
+        double existingProjectWeight = projectRepository.findByUcId(uc.getId()).stream()
+                .mapToDouble(Project::getWeight).sum();
+
+        if (existingTestWeight + existingProjectWeight + newWeight > 1.0001) { // float rounding
+            throw new DEIException(ErrorMessage.WEIGHT_BUDGET_EXCEEDED);
+        }
+    }
+
     public List<TestDto> getTestsByUc(long ucId) {
         fetchUcOrThrow(ucId);
 
@@ -65,6 +82,7 @@ public class TestService {
     public TestDto createTest(long ucId, CreateTestDto dto, long requesterId) {
         Uc uc = fetchUcOrThrow(ucId);
         authorizeTestChange(uc, requesterId);
+        validateWeightBudget(uc, dto.weight(), null);
 
         Test test = new Test(dto.title(), dto.date(), dto.weight(), uc);
         return new TestDto(testRepository.save(test));
@@ -78,6 +96,8 @@ public class TestService {
         if (!test.getUc().getId().equals(uc.getId())) {
             throw new DEIException(ErrorMessage.NO_SUCH_TEST);
         }
+
+        validateWeightBudget(uc, dto.weight(), id);
 
         test.setTitle(dto.title());
         test.setDate(dto.date());

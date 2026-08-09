@@ -14,6 +14,8 @@ import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.domain.Grade;
 public interface GradeRepository extends JpaRepository<Grade, Long> {
     List<Grade> findByTestId(Long testId);
     List<Grade> findByProjectId(Long projectId);
+    List<Grade> findByPersonId(Long personId);
+    List<Grade> findByGroup_MembersId(Long personId);
     Optional<Grade> findByTestIdAndPersonId(Long testId, Long personId);
     Optional<Grade> findByProjectIdAndPersonId(Long projectId, Long personId);
     Optional<Grade> findByProjectIdAndGroupId(Long projectId, Long groupId);
