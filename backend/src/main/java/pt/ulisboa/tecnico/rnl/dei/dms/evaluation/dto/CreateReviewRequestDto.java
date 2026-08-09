@@ -1,5 +1,5 @@
 package pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto;
 
-public class CreateReviewRequestDto {
-    
-}
+import java.time.LocalDateTime;
+
+public record CreateReviewRequestDto(long testId, String justification, LocalDateTime deadline) {}

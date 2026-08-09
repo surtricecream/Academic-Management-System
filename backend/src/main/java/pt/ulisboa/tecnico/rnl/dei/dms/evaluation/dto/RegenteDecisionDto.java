@@ -1,5 +1,3 @@
 package pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto;
 
-public class RegenteDecisionDto {
-    
-}
+public record RegenteDecisionDto(boolean approved, String decisionNote) {}
