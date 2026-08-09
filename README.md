@@ -121,3 +121,9 @@ psql -h localhost -p <PORT> -U <USER> <DB_NAME>
 - A grade is tied to either a Test or a Project, and either an individual student or a project group, never both — enforced in `GradeService`
 - Re-submitting a grade for the same test/person (or project/group) updates the existing grade rather than creating a duplicate
 - Scores are validated to be within 0–20
+
+### Grades View
+- `GET /api/ucs/{ucId}/students/{personId}/grades` returns a student's grades in a UC plus a computed weighted average
+- Average is computed only from evaluations that have been graded so far (ungraded evaluations are excluded rather than counted as zero) — weights re-normalize automatically as more grades are added through the semester
+- Viewable by the student themselves, the UC's Regente or Assistentes, or an Administrator
+- Test/Project creation enforces a weight budget: the sum of all weights in a UC cannot exceed 1.0 (with small floating-point tolerance), checked on both create and update
