@@ -127,3 +127,10 @@ psql -h localhost -p <PORT> -U <USER> <DB_NAME>
 - Average is computed only from evaluations that have been graded so far (ungraded evaluations are excluded rather than counted as zero) — weights re-normalize automatically as more grades are added through the semester
 - Viewable by the student themselves, the UC's Regente or Assistentes, or an Administrator
 - Test/Project creation enforces a weight budget: the sum of all weights in a UC cannot exceed 1.0 (with small floating-point tolerance), checked on both create and update
+
+### Exam Review Workflow
+- `POST /review-requests` — student submits a review request for a test grade, with justification and deadline
+- `POST /review-requests/{id}/assistant-opinion` — Regente, Assistente, or Admin adds an opinion (optional step)
+- `POST /review-requests/{id}/decide` — only the UC's Regente or an Admin can make the final approve/reject decision
+- Full history is preserved on a single record (justification, opinion, decision) rather than a separate audit table — sufficient given each transition is timestamped and nothing is overwritten
+- Grade changes resulting from an approved review are not automatic — the professor manually re-grades via the existing grading endpoint if the outcome warrants a score change, since the correct adjustment amount isn't derivable from the workflow itself
