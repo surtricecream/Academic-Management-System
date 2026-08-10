@@ -27,7 +27,6 @@ import pt.ulisboa.tecnico.rnl.dei.dms.ucmembership.repository.UcMembershipReposi
 import pt.ulisboa.tecnico.rnl.dei.dms.person.domain.Person;
 import pt.ulisboa.tecnico.rnl.dei.dms.person.repository.PersonRepository;
 
-
 @Service
 @Transactional
 public class GradeService {
