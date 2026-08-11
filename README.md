@@ -134,3 +134,8 @@ psql -h localhost -p <PORT> -U <USER> <DB_NAME>
 - `POST /review-requests/{id}/decide` — only the UC's Regente or an Admin can make the final approve/reject decision
 - Full history is preserved on a single record (justification, opinion, decision) rather than a separate audit table — sufficient given each transition is timestamped and nothing is overwritten
 - Grade changes resulting from an approved review are not automatic — the professor manually re-grades via the existing grading endpoint if the outcome warrants a score change, since the correct adjustment amount isn't derivable from the workflow itself
+
+### Student Profile
+- `GET /api/students/{studentId}/profile` — returns enrolled UCs with computed averages, plus pending (ungraded) tests and projects
+- Visible only to the student themselves or an Administrator 
+- "Projetos submetidos" (submitted project files) tracking was simplified out — the current model tracks grading completeness as a proxy for pending work, not actual file submission state, since no submission/file-upload entity was built
