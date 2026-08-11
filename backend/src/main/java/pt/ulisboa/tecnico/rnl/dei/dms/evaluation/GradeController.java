@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto.GradeDto;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto.StudentGradesDto;
+import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto.StudentProfileDto;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto.CreateGradeDto;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.service.GradeService;
 import pt.ulisboa.tecnico.rnl.dei.dms.exceptions.DEIException;
@@ -61,5 +62,13 @@ public class GradeController {
             .orElseThrow(() -> new DEIException(ErrorMessage.NO_SUCH_PERSON, authentication.getName()));
         
         return gradeService.getStudentGrades(ucId, personId, requester.getId());
+    }
+
+    @GetMapping("/students/{studentId}/profile")
+    public StudentProfileDto getProfile(@PathVariable long studentId, Authentication authentication) {
+        Person requester = personRepository.findByEmail(authentication.getName())
+            .orElseThrow(() -> new DEIException(ErrorMessage.NO_SUCH_PERSON, authentication.getName()));
+            
+        return gradeService.getStudentProfile(studentId, requester.getId());
     }
 }

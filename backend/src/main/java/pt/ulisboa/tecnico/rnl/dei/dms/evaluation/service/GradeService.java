@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.domain.ProjectGroup;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.domain.Grade;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto.GradeDto;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto.StudentGradesDto;
+import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto.StudentProfileDto;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto.CreateGradeDto;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.repository.GradeRepository;
 import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.repository.ProjectRepository;
@@ -26,6 +27,7 @@ import pt.ulisboa.tecnico.rnl.dei.dms.ucmembership.domain.UcMembership;
 import pt.ulisboa.tecnico.rnl.dei.dms.ucmembership.repository.UcMembershipRepository;
 import pt.ulisboa.tecnico.rnl.dei.dms.person.domain.Person;
 import pt.ulisboa.tecnico.rnl.dei.dms.person.repository.PersonRepository;
+import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.dto.StudentProfileDto.*;
 
 @Service
 @Transactional
@@ -104,6 +106,17 @@ public class GradeService {
         if (g.getTest() != null) return g.getTest().getUc().getId().equals(ucId);
         if (g.getProject() != null) return g.getProject().getUc().getId().equals(ucId);
         return false;
+    }
+
+    private boolean isProjectGradedForStudent(Project project, long studentId) {
+        if (Boolean.TRUE.equals(project.getIsGroupProject())) {
+            return gradeRepository.findByProjectId(project.getId()).stream()
+                    .anyMatch(grade -> grade.getGroup() != null
+                            && grade.getGroup().getMembers().stream()
+                                    .anyMatch(member -> member.getId().equals(studentId)));
+        }
+
+        return gradeRepository.findByProjectIdAndPersonId(project.getId(), studentId).isPresent();
     }
 
     public GradeDto gradeTest(long testId, CreateGradeDto dto, long requesterId) {
@@ -235,5 +248,41 @@ public class GradeService {
 
         List<GradeDto> gradeDtos = ucGrades.stream().map(GradeDto::new).toList();
         return new StudentGradesDto(person.getId(), person.getName(), uc.getId(), uc.getName(), gradeDtos, average);
+    }
+
+    public StudentProfileDto getStudentProfile(long studentId, long requesterId) {
+        Person student = fetchPersonOrThrow(studentId);
+
+        if (requesterId != studentId) {
+            Person requester = fetchPersonOrThrow(requesterId);
+            if (requester.getType() != Person.PersonType.ADMINISTRATOR) {
+                throw new DEIException(ErrorMessage.NOT_AUTHORIZED);
+            }
+        }
+
+        List<UcMembership> memberships = membershipRepository.findByPersonIdAndRole(studentId, UcMembership.MembershipRole.ALUNO);
+
+        List<EnrolledUcDto> ucs = memberships.stream()
+                .map(m -> {
+                    Uc uc = m.getUc();
+                    Double avg = getStudentGrades(uc.getId(), studentId, requesterId).average();
+                    return new EnrolledUcDto(uc.getId(), uc.getName(), avg);
+                })
+                .toList();
+
+        List<PendingEvaluationDto> pending = new ArrayList<>();
+        for (UcMembership m : memberships) {
+            long ucId = m.getUc().getId();
+            for (Test t : testRepository.findByUcId(ucId)) {
+                boolean graded = gradeRepository.findByTestIdAndPersonId(t.getId(), studentId).isPresent();
+                if (!graded) pending.add(new PendingEvaluationDto("TEST", t.getId(), t.getTitle(), t.getDate(), m.getUc().getName()));
+            }
+            for (Project p : projectRepository.findByUcId(ucId)) {
+                boolean graded = isProjectGradedForStudent(p, studentId);
+                if (!graded) pending.add(new PendingEvaluationDto("PROJECT", p.getId(), p.getTitle(), p.getDeadline(), m.getUc().getName()));
+            }
+        }
+
+        return new StudentProfileDto(student.getId(), student.getName(), ucs, pending);
     }   
 }
