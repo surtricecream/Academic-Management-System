@@ -11,20 +11,15 @@
       </v-btn>
     </v-toolbar-items>
     <v-spacer />
-    <span>Current Role: {{ currentRole }}</span>
+    <span v-if="authStore.isLoggedIn">{{ authStore.name }} ({{ authStore.type }})</span>
+    <span v-else>Not logged in</span>
     <v-spacer />
     <v-toolbar-items class="align-center">
       <DarkModeSwitch />
     </v-toolbar-items>
 
-    <v-toolbar-items class="ms-2">
-      <v-btn size="small" @click="changeRole('student')">Aluno</v-btn>
-      <v-btn size="small" @click="changeRole('teaching_assistant')">Professor Assistente</v-btn>
-      <v-btn size="small" @click="changeRole('main_teacher')">Professor Regente</v-btn>
-      <v-btn size="small" @click="changeRole('s')">Administrador</v-btn>
-    </v-toolbar-items>
-    <v-toolbar-items class="ms-2">
-      <v-btn size="small" variant="text">
+    <v-toolbar-items class="ms-2" v-if="authStore.isLoggedIn">
+      <v-btn size="small" variant="text" @click="handleLogout">
         Terminar sessão
         <v-icon size="small" class="ms-1" icon="mdi-logout"></v-icon>
       </v-btn>
@@ -34,24 +29,16 @@
 
 <script setup lang="ts">
 import DarkModeSwitch from './DarkModeSwitch.vue'
-import { useRoleStore } from '@/stores/role'
-import { ref } from 'vue'
-import { watch } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
 
-const roleStore = useRoleStore()
+const authStore = useAuthStore()
+const router = useRouter()
 
-const changeRole = (role: string) => {
-  roleStore.currentRole = role
+const handleLogout = () => {
+  authStore.logout()
+  router.push('/login')
 }
-
-const currentRole = ref(roleStore.currentRole)
-
-watch(
-  () => roleStore.currentRole,
-  (newRole) => {
-    currentRole.value = newRole
-  }
-)
 </script>
 
 <style scoped>

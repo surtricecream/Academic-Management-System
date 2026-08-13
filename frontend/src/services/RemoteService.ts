@@ -1,8 +1,10 @@
 import axios from 'axios'
 import type { AxiosResponse } from 'axios'
 import { useAppearanceStore } from '@/stores/appearance'
+import { useAuthStore } from '@/stores/auth'
 import DeiError from '@/models/DeiError'
 import type PersonDto from '@/models/PersonDto'
+import type CreatePersonDto from '@/models/CreatePersonDto'
 
 const httpClient = axios.create()
 httpClient.defaults.timeout = 50000
@@ -14,8 +16,12 @@ export default class RemoteServices {
     return httpClient.get('/people')
   }
 
-  static async createPerson(person: PersonDto): Promise<PersonDto> {
+  static async createPerson(person: CreatePersonDto): Promise<PersonDto> {
     return httpClient.post('/people', person)
+  }
+
+  static async login(email: string, password: string): Promise<any> {
+    return httpClient.post('/auth/login', { email, password })
   }
 
   static async errorMessage(error: any): Promise<string> {
@@ -40,5 +46,12 @@ export default class RemoteServices {
   }
 }
 
-httpClient.interceptors.request.use((request) => request, RemoteServices.handleError)
+httpClient.interceptors.request.use((config) => {
+  const authStore = useAuthStore()
+  if (authStore.token) {
+    config.headers.Authorization = `Bearer ${authStore.token}`
+  }
+  return config
+}, RemoteServices.handleError)
+
 httpClient.interceptors.response.use((response) => response.data, RemoteServices.handleError)

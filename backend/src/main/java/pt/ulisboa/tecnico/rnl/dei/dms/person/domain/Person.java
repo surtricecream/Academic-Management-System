@@ -17,7 +17,6 @@ public class Person {
 		MAIN_TEACHER,
 		TEACHING_ASSISTANT,
 		STUDENT
-		// maybe add more types later?
 	}
 
 	@Id
