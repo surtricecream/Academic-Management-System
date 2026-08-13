@@ -5,6 +5,9 @@ import { useAuthStore } from '@/stores/auth'
 import DeiError from '@/models/DeiError'
 import type PersonDto from '@/models/PersonDto'
 import type CreatePersonDto from '@/models/CreatePersonDto'
+import type CourseDto from '@/models/CourseDto'
+import type UcDto from '@/models/UcDto'
+import type CreateUcDto from '@/models/CreateUcDto'
 
 const httpClient = axios.create()
 httpClient.defaults.timeout = 50000
@@ -22,6 +25,26 @@ export default class RemoteServices {
 
   static async login(email: string, password: string): Promise<any> {
     return httpClient.post('/auth/login', { email, password })
+  }
+
+  static async getCourses(): Promise<CourseDto[]> {
+  return httpClient.get('/courses')
+  }
+
+  static async createCourse(course: CourseDto): Promise<CourseDto> {
+    return httpClient.post('/courses', course)
+  }
+
+  static async getUcs(): Promise<UcDto[]> {
+    return httpClient.get('/ucs')
+  }
+
+  static async getUc(id: number): Promise<UcDto> {
+    return httpClient.get(`/ucs/${id}`)
+  }
+
+  static async createUc(uc: CreateUcDto): Promise<UcDto> {
+    return httpClient.post('/ucs', uc)
   }
 
   static async errorMessage(error: any): Promise<string> {

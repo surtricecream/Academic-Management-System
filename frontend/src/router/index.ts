@@ -4,6 +4,8 @@ import HomeView from '../views/HomeView.vue'
 import PeopleView from '@/views/people/PeopleView.vue'
 import StatisticsView from '@/views/statistics/StatisticsView.vue'
 import LoginView from '../views/LoginView.vue'
+import CoursesView from '@/views/courses/CoursesView.vue'
+import UcsView from '@/views/ucs/UcsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,6 +19,16 @@ const router = createRouter({
       path: '/people',
       name: 'people',
       component: PeopleView
+    },
+    { 
+      path: '/courses',
+      name: 'courses',
+      component: CoursesView 
+    },
+    { 
+      path: '/ucs', 
+      name: 'ucs', 
+      component: UcsView 
     },
     {
       path: '/statistics',
