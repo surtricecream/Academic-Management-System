@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import type CourseDto from '@/models/CourseDto'
+import type CourseDto from '../../models/courses/CourseDto'
 import RemoteService from '@/services/RemoteService'
 import { reactive, ref } from 'vue'
 

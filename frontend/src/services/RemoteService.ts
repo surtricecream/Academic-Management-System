@@ -3,11 +3,11 @@ import type { AxiosResponse } from 'axios'
 import { useAppearanceStore } from '@/stores/appearance'
 import { useAuthStore } from '@/stores/auth'
 import DeiError from '@/models/DeiError'
-import type PersonDto from '@/models/PersonDto'
-import type CreatePersonDto from '@/models/CreatePersonDto'
-import type CourseDto from '@/models/CourseDto'
-import type UcDto from '@/models/UcDto'
-import type CreateUcDto from '@/models/CreateUcDto'
+import type PersonDto from '../models/people/PersonDto'
+import type CreatePersonDto from '../models/people/CreatePersonDto'
+import type CourseDto from '../models/courses/CourseDto'
+import type UcDto from '../models/ucs/UcDto'
+import type CreateUcDto from '../models/ucs/CreateUcDto'
 
 const httpClient = axios.create()
 httpClient.defaults.timeout = 50000

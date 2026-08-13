@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import type UcDto from '@/models/UcDto'
+import type UcDto from '../../models/ucs/UcDto'
 import RemoteService from '@/services/RemoteService'
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
