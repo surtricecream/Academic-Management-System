@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.rnl.dei.dms.course.service;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,23 @@ public class CourseService {
     @Autowired
     private CourseRepository courseRepository;
 
+    private static final Pattern COURSE_CODE_PATTERN = Pattern.compile("^[A-Z0-9-]{2,6}$");
+
     private Course catchCourseOrThrow(long id) {
         return courseRepository.findById(id)
                 .orElseThrow(() -> new DEIException(ErrorMessage.NO_SUCH_COURSE, Long.toString(id)));
+    }
+
+    private void validateCourseData(CourseDto dto) {
+        if (dto.code() == null || !COURSE_CODE_PATTERN.matcher(dto.code()).matches()) {
+            throw new DEIException(ErrorMessage.INVALID_COURSE_DATA, "código inválido");
+        }
+        if (dto.name() == null || dto.name().isBlank() || dto.name().length() < 3 || dto.name().length() > 150) {
+            throw new DEIException(ErrorMessage.INVALID_COURSE_DATA, "nome inválido");
+        }
+        if (dto.durationYears() == null || dto.durationYears() < 1 || dto.durationYears() > 3) {
+            throw new DEIException(ErrorMessage.INVALID_COURSE_DATA, "duração deve ser entre 1 e 3 anos");
+        }
     }
 
     public List<CourseDto> getCourses() {
@@ -31,6 +46,8 @@ public class CourseService {
     }
 
     public CourseDto createCourse(CourseDto courseDto) {
+        validateCourseData(courseDto);
+
         Course course = new Course(courseDto);
         course.setId(null);
         return new CourseDto(courseRepository.save(course));
@@ -41,6 +58,8 @@ public class CourseService {
     }
 
     public CourseDto updateCourse(long id, CourseDto courseDto) {
+        validateCourseData(courseDto);
+
         Course course = catchCourseOrThrow(id);
             course.setCode(courseDto.code());
             course.setName(courseDto.name());

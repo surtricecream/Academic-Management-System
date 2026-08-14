@@ -14,8 +14,8 @@
       <v-card prepend-icon="mdi-account" title="Nova Pessoa">
         <v-card-text>
           <v-text-field label="Nome*" required v-model="newPerson.name"></v-text-field>
-          <v-text-field label="IST ID*" placeholder="ist1000000" required v-model="newPerson.istId"></v-text-field>
-          <v-text-field label="Email*" placeholder="nome@tecnico.ulisboa.pt" required v-model="newPerson.email"></v-text-field>
+          <v-text-field label="IST ID*" placeholder="Ex: ist1111111" required v-model="newPerson.istId"></v-text-field>
+          <v-text-field label="Email*" placeholder="Ex: nome@tecnico.ulisboa.pt" required v-model="newPerson.email"></v-text-field>
           <v-text-field
             label="Password*"
             required

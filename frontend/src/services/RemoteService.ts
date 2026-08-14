@@ -26,7 +26,7 @@ export default class RemoteServices {
   static async updatePerson(id: number, person: PersonDto): Promise<PersonDto> {
     return httpClient.put(`/people/${id}`, person)
   }
-  
+
   static async deletePerson(id: number): Promise<void> {
     return httpClient.delete(`/people/${id}`)
   }
@@ -41,6 +41,14 @@ export default class RemoteServices {
 
   static async createCourse(course: CourseDto): Promise<CourseDto> {
     return httpClient.post('/courses', course)
+  }
+
+  static async updateCourse(id: number, course: CourseDto): Promise<CourseDto> {
+    return httpClient.put(`/courses/${id}`, course)
+  }
+
+  static async deleteCourse(id: number): Promise<void> {
+    return httpClient.delete(`/courses/${id}`)
   }
 
   static async getUcs(): Promise<UcDto[]> {
