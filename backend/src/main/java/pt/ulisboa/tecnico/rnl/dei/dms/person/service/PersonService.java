@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.rnl.dei.dms.person.service;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,9 +26,45 @@ public class PersonService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	private static final Pattern IST_ID_PATTERN = Pattern.compile("^ist1\\d{6}$");
+	private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^\\s@]+@tecnico\\.ulisboa\\.pt$");
+
 	private Person fetchPersonOrThrow(long id) {
 		return personRepository.findById(id)
 				.orElseThrow(() -> new DEIException(ErrorMessage.NO_SUCH_PERSON, Long.toString(id)));
+	}
+
+	private void validateCreatePersonData(CreatePersonDto dto) {
+    	if (dto.name() == null || dto.name().isBlank()) {
+    	    throw new DEIException(ErrorMessage.INVALID_PERSON_DATA, "nome em falta");
+    	}
+    	if (dto.istId() == null || !IST_ID_PATTERN.matcher(dto.istId()).matches()) {
+    	    throw new DEIException(ErrorMessage.INVALID_PERSON_DATA, "IST ID inválido");
+    	}
+    	if (dto.email() == null || !EMAIL_PATTERN.matcher(dto.email()).matches()) {
+    	    throw new DEIException(ErrorMessage.INVALID_PERSON_DATA, "email inválido");
+    	}
+    	if (dto.password() == null || dto.password().isBlank()) {
+    	    throw new DEIException(ErrorMessage.INVALID_PERSON_DATA, "password em falta");
+    	}
+    	if (dto.type() == null) {
+    	    throw new DEIException(ErrorMessage.INVALID_PERSON_DATA, "tipo em falta");
+    	}
+	}
+
+	private void validateUpdatePersonData(PersonDto dto) {
+	    if (dto.name() == null || dto.name().isBlank()) {
+	        throw new DEIException(ErrorMessage.INVALID_PERSON_DATA, "nome em falta");
+	    }
+	    if (dto.istId() == null || !IST_ID_PATTERN.matcher(dto.istId()).matches()) {
+	        throw new DEIException(ErrorMessage.INVALID_PERSON_DATA, "IST ID inválido");
+	    }
+	    if (dto.email() == null || !EMAIL_PATTERN.matcher(dto.email()).matches()) {
+	        throw new DEIException(ErrorMessage.INVALID_PERSON_DATA, "email inválido");
+	    }
+	    if (dto.type() == null || dto.type().isBlank()) {
+	        throw new DEIException(ErrorMessage.INVALID_PERSON_DATA, "tipo em falta");
+	    }
 	}
 
 	@Transactional
@@ -39,6 +76,8 @@ public class PersonService {
 
 	@Transactional
 	public PersonDto createPerson(CreatePersonDto personDto) {
+		validateCreatePersonData(personDto);
+
 		String encodedPassword = passwordEncoder.encode(personDto.password());
 		Person person = new Person(personDto, encodedPassword);
 		person.setId(null); 
@@ -52,6 +91,8 @@ public class PersonService {
 
 	@Transactional
 	public PersonDto updatePerson(long id, PersonDto personDto) {
+		validateUpdatePersonData(personDto);
+
 		Person person = fetchPersonOrThrow(id); 
 		    person.setName(personDto.name());
     		person.setIstId(personDto.istId());
