@@ -11,26 +11,30 @@
         ></v-btn>
       </template>
 
-      <v-card prepend-icon="mdi-account" title="Nova">
+      <v-card prepend-icon="mdi-account" title="Nova Pessoa">
         <v-card-text>
           <v-text-field label="Nome*" required v-model="newPerson.name"></v-text-field>
-          <v-text-field label="IST ID*" required v-model="newPerson.istId"></v-text-field>
-
-            <v-select
+          <v-text-field label="IST ID*" placeholder="ist1000000" required v-model="newPerson.istId"></v-text-field>
+          <v-text-field label="Email*" placeholder="nome@tecnico.ulisboa.pt" required v-model="newPerson.email"></v-text-field>
+          <v-text-field
+            label="Password*"
+            required
+            type="password"
+            v-model="newPerson.password"
+          ></v-text-field>
+          <v-select
             :items="['Administrador', 'Professor Regente', 'Professor Assistente', 'Aluno']"
             label="Categoria*"
             required
-            v-model="newPerson.type"
-            ></v-select>
+            v-model="selectedType"
+          ></v-select>
         </v-card-text>
 
         <v-divider></v-divider>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-
           <v-btn text="Close" variant="plain" @click="dialog = false"></v-btn>
-
           <v-btn
             color="primary"
             text="Save"
@@ -48,32 +52,34 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import type PersonDto from '@/models/people/PersonDto'
+import type CreatePersonDto from '@/models/people/CreatePersonDto'
 import RemoteService from '@/services/RemoteService'
 
 const dialog = ref(false)
-
 const emit = defineEmits(['person-created'])
 
 const typeMappings = {
-  'Administrador': 'ADMINISTRATOR',
+  Administrador: 'ADMINISTRATOR',
   'Professor Regente': 'MAIN_TEACHER',
   'Professor Assistente': 'TEACHING_ASSISTANT',
-  'Aluno': 'STUDENT'
+  Aluno: 'STUDENT'
 }
 
-const newPerson = ref<PersonDto>({
+const selectedType = ref('')
+
+const newPerson = ref<CreatePersonDto>({
   name: '',
+  istId: '',
+  email: '',
+  password: '',
   type: ''
 })
 
 const savePerson = async () => {
-  newPerson.value.type = typeMappings[newPerson.value.type as keyof typeof typeMappings]
+  newPerson.value.type = typeMappings[selectedType.value as keyof typeof typeMappings]
   await RemoteService.createPerson(newPerson.value)
-  newPerson.value = {
-    name: '',
-    type: ''
-  }
+  newPerson.value = { name: '', istId: '', email: '', password: '', type: '' }
+  selectedType.value = ''
   emit('person-created')
 }
 </script>

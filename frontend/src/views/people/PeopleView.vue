@@ -8,7 +8,6 @@
     </v-col>
   </v-row>
 
-
   <v-text-field
     v-model="search"
     label="Search"
@@ -44,23 +43,57 @@
     </template>
     <template v-slot:[`item.actions`]="{ item }">
       <v-icon @click="editPerson(item)" class="mr-2">mdi-pencil</v-icon>
-      <v-icon @click="deletePerson(item)">mdi-delete</v-icon>
+      <v-icon @click="promptDelete(item)">mdi-delete</v-icon>
     </template>
-
   </v-data-table>
 
+  <ConfirmDialog
+    v-model="deleteDialogOpen"
+    title="Eliminar Pessoa"
+    :message="`Tem a certeza que quer eliminar '${personToDelete?.name}'?`"
+    @confirm="confirmDelete"
+  />
+
+  <v-dialog v-model="editDialog" max-width="400">
+    <v-card prepend-icon="mdi-account" title="Editar Pessoa">
+      <v-card-text>
+        <v-text-field label="Nome*" required v-model="editingPerson.name"></v-text-field>
+        <v-text-field label="IST ID*" required v-model="editingPerson.istId"></v-text-field>
+        <v-text-field label="Email*" required v-model="editingPerson.email"></v-text-field>
+        <v-select
+          :items="['Administrador', 'Professor Regente', 'Professor Assistente', 'Aluno']"
+          label="Categoria*"
+          required
+          v-model="editSelectedType"
+        ></v-select>
+      </v-card-text>
+      <v-divider></v-divider>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn text="Close" variant="plain" @click="editDialog = false"></v-btn>
+        <v-btn color="primary" text="Save" variant="tonal" @click="saveEdit"></v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
-import type PeopleDto from '@/models/PeopleDto'
+import type PersonDto from '@/models/people/PersonDto.js'
 import RemoteService from '@/services/RemoteService'
 import CreatePersonDialog from './CreatePersonDialog.vue'
+import ConfirmDialog from '@/components/ConfirmDialog.vue'
 import { reactive, ref } from 'vue'
 
 let search = ref('')
 let loading = ref(true)
 const headers = [
-  { title: 'ID', key: 'id', value: 'id', sortable: true, filterable: false },
+  { 
+    title: 'ID', 
+    key: 'id', 
+    value: 'id', 
+    sortable: true, 
+    filterable: false
+  },
   {
     title: 'Nome',
     key: 'name',
@@ -89,10 +122,9 @@ const headers = [
     sortable: false,
     filterable: false
   }
-  // TODO: maybe add another column with possible actions? (edit / delete)
 ]
 
-const people: PeopleDto[] = reactive([])
+const people: PersonDto[] = reactive([])
 
 getPeople()
 async function getPeople() {
@@ -102,17 +134,47 @@ async function getPeople() {
   console.log(people)
 }
 
-const editPerson = (person: PeopleDto) => {
-  console.log('Editing person:', person)
+const typeMappings: Record<string, string> = {
+  Administrador: 'ADMINISTRATOR',
+  'Professor Regente': 'MAIN_TEACHER',
+  'Professor Assistente': 'TEACHING_ASSISTANT',
+  Aluno: 'STUDENT'
+}
+const reverseTypeMappings: Record<string, string> = Object.fromEntries(
+  Object.entries(typeMappings).map(([k, v]) => [v, k])
+)
+
+const editDialog = ref(false)
+const editingPerson = ref<PersonDto>({})
+const editSelectedType = ref('')
+
+const editPerson = (person: PersonDto) => {
+  editingPerson.value = { ...person }
+  editSelectedType.value = reverseTypeMappings[person.type ?? ''] ?? ''
+  editDialog.value = true
 }
 
-const deletePerson = (person: PeopleDto) => {
-  console.log('Deleting person:', person)
+const saveEdit = async () => {
+  editingPerson.value.type = typeMappings[editSelectedType.value]
+  await RemoteService.updatePerson(editingPerson.value.id!, editingPerson.value)
+  editDialog.value = false
+  await getPeople()
 }
 
+const deleteDialogOpen = ref(false)
+const personToDelete = ref<PersonDto | null>(null)
+
+const promptDelete = (person: PersonDto) => {
+  personToDelete.value = person
+  deleteDialogOpen.value = true
+}
+
+const confirmDelete = async () => {
+  await RemoteService.deletePerson(personToDelete.value!.id!)
+  await getPeople()
+}
 
 const fuzzySearch = (value: string, search: string) => {
-  // Regex to match any character in between the search characters
   let searchRegex = new RegExp(search.split('').join('.*'), 'i')
   return searchRegex.test(value)
 }

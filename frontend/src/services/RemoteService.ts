@@ -23,6 +23,14 @@ export default class RemoteServices {
     return httpClient.post('/people', person)
   }
 
+  static async updatePerson(id: number, person: PersonDto): Promise<PersonDto> {
+    return httpClient.put(`/people/${id}`, person)
+  }
+  
+  static async deletePerson(id: number): Promise<void> {
+    return httpClient.delete(`/people/${id}`)
+  }
+
   static async login(email: string, password: string): Promise<any> {
     return httpClient.post('/auth/login', { email, password })
   }
