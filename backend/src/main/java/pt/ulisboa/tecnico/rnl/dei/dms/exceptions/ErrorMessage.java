@@ -25,6 +25,7 @@ public enum ErrorMessage {
 	INVALID_DECISION("Decisão inválida", 1030),
 	INVALID_PERSON_DATA("Dados de pessoa inválidos: %s", 1032),
 	INVALID_COURSE_DATA("Dados de curso inválidos: %s", 1033),
+	INVALID_UC_DATA("Dados de Uc inválidos: %s", 1034),
 	NOT_AUTHORIZED("Não está autorizado a executar esta operação.", 1008),
 	MEMBERSHIP_ALREADY_EXISTS("A pessoa %s já é membro desta UC.", 1009),
 	GROUP_NOT_ALLOWED("Este projeto não permite grupos", 1014),

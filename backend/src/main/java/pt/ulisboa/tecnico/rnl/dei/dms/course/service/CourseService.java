@@ -20,7 +20,7 @@ public class CourseService {
     @Autowired
     private CourseRepository courseRepository;
 
-    private static final Pattern COURSE_CODE_PATTERN = Pattern.compile("^[A-Z0-9-]{2,6}$");
+    private static final Pattern COURSE_CODE_PATTERN = Pattern.compile("^[A-Z]{1,5}$");
 
     private Course catchCourseOrThrow(long id) {
         return courseRepository.findById(id)

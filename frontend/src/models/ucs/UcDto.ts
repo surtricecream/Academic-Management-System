@@ -4,7 +4,9 @@ export default class UcDto {
   name?: string
   semester?: number
   ects?: number
+  regenteId?: number
   regenteName?: string
+  courseIds?: number[]
   courseNames?: string[]
 
   constructor(obj?: Partial<UcDto>) {

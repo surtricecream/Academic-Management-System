@@ -63,6 +63,14 @@ export default class RemoteServices {
     return httpClient.post('/ucs', uc)
   }
 
+  static async updateUc(id: number, uc: CreateUcDto): Promise<UcDto> {
+    return httpClient.put(`/ucs/${id}`, uc)
+  }
+  
+  static async deleteUc(id: number): Promise<void> {
+    return httpClient.delete(`/ucs/${id}`)
+  }
+
   static async errorMessage(error: any): Promise<string> {
     if (error.message === 'Network Error') {
       return 'Unable to connect to the server'

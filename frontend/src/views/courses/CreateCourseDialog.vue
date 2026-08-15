@@ -14,7 +14,7 @@
       <v-card prepend-icon="mdi-school" title="Novo Curso">
         <v-card-text>
           <v-text-field label="Código*" placeholder="Ex: LEIC" required v-model="newCourse.code"></v-text-field>
-          <v-text-field label="Nome*" required v-model="newCourse.name"></v-text-field>
+          <v-text-field label="Nome*" placeholder="Ex: Licenciatura em Engenharia Informática e de Computadores" required v-model="newCourse.name"></v-text-field>
           <v-text-field
             label="Duração (anos)*"
             required

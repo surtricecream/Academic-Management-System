@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.rnl.dei.dms.uc.service;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,9 +31,26 @@ public class UcService {
     @Autowired
     private CourseRepository courseRepository;
 
+    private static final Pattern UC_CODE_PATTERN = Pattern.compile("^[A-Z]{1,3}\\d?$");
+
     private Uc fetchUcOrThrow(long id) {
         return ucRepository.findById(id)
             .orElseThrow(() -> new DEIException(ErrorMessage.NO_SUCH_UC, Long.toString(id)));
+    }
+
+    private void validateUcData(CreateUcDto dto) {
+        if (dto.code() == null || !UC_CODE_PATTERN.matcher(dto.code()).matches()) {
+            throw new DEIException(ErrorMessage.INVALID_UC_DATA, "código inválido");
+        }
+        if (dto.name() == null || dto.name().isBlank() || dto.name().length() < 3 || dto.name().length() > 150) {
+            throw new DEIException(ErrorMessage.INVALID_UC_DATA, "nome inválido");
+        }
+        if (dto.semester() < 1 || dto.semester() > 2) {
+            throw new DEIException(ErrorMessage.INVALID_UC_DATA, "semestre inválido");
+        }
+        if (dto.ects() != 3 && dto.ects() != 6) {
+            throw new DEIException(ErrorMessage.INVALID_UC_DATA, "ECTS inválido");
+        }
     }
 
     public List<UcDto> getUcs() {
@@ -42,6 +60,8 @@ public class UcService {
     }
 
     public UcDto createUc(CreateUcDto ucDto) {
+        validateUcData(ucDto);
+
         Person regente = personRepository.findById(ucDto.regenteId())
             .orElseThrow(() -> new DEIException(ErrorMessage.NO_SUCH_PERSON, Long.toString(ucDto.regenteId())));
 
@@ -60,6 +80,8 @@ public class UcService {
     }
 
     public UcDto updateUc(long id, CreateUcDto ucDto) {
+        validateUcData(ucDto);
+
         Person regente = personRepository.findById(ucDto.regenteId())
             .orElseThrow(() -> new DEIException(ErrorMessage.NO_SUCH_PERSON, Long.toString(ucDto.regenteId())));
 

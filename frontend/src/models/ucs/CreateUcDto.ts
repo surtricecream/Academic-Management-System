@@ -3,8 +3,8 @@ export default class CreateUcDto {
   name?: string
   semester?: number
   ects?: number
-  regenteName?: number
-  courseNames?: number[]
+  regenteId?: number
+  courseIds?: number[]
 
   constructor(obj?: Partial<CreateUcDto>) {
     Object.assign(this, obj)
