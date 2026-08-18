@@ -8,6 +8,8 @@ import type CreatePersonDto from '../models/people/CreatePersonDto'
 import type CourseDto from '../models/courses/CourseDto'
 import type UcDto from '../models/ucs/UcDto'
 import type CreateUcDto from '../models/ucs/CreateUcDto'
+import type UcMembershipDto from '@/models/ucmemberships/UcMembershipDto'
+import type AddMembershipDto from '@/models/ucmemberships/AddMembershipDto'
 
 const httpClient = axios.create()
 httpClient.defaults.timeout = 50000
@@ -15,6 +17,7 @@ httpClient.defaults.baseURL = import.meta.env.VITE_ROOT_API
 httpClient.defaults.headers.post['Content-Type'] = 'application/json'
 
 export default class RemoteServices {
+  // People
   static async getPeople(): Promise<PersonDto[]> {
     return httpClient.get('/people')
   }
@@ -35,6 +38,7 @@ export default class RemoteServices {
     return httpClient.post('/auth/login', { email, password })
   }
 
+  // Courses
   static async getCourses(): Promise<CourseDto[]> {
   return httpClient.get('/courses')
   }
@@ -51,6 +55,7 @@ export default class RemoteServices {
     return httpClient.delete(`/courses/${id}`)
   }
 
+  // Ucs
   static async getUcs(): Promise<UcDto[]> {
     return httpClient.get('/ucs')
   }
@@ -69,6 +74,19 @@ export default class RemoteServices {
   
   static async deleteUc(id: number): Promise<void> {
     return httpClient.delete(`/ucs/${id}`)
+  }
+
+  // Memberships
+  static async getUcMembers(ucId: number): Promise<UcMembershipDto[]> {
+    return httpClient.get(`/ucs/${ucId}/members`)
+  }
+
+  static async addUcMember(ucId: number, dto: AddMembershipDto): Promise<UcMembershipDto> {
+    return httpClient.post(`/ucs/${ucId}/members`, dto)
+  }
+
+  static async removeUcMember(ucId: number, personId: number): Promise<void> {
+    return httpClient.delete(`/ucs/${ucId}/members/${personId}`)
   }
 
   static async errorMessage(error: any): Promise<string> {

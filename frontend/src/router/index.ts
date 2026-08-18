@@ -6,6 +6,7 @@ import StatisticsView from '@/views/statistics/StatisticsView.vue'
 import LoginView from '../views/LoginView.vue'
 import CoursesView from '@/views/courses/CoursesView.vue'
 import UcsView from '@/views/ucs/UcsView.vue'
+import UcDetailsView from '@/views/ucs/UcDetailsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,6 +40,12 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView
+    },
+    { 
+      path: '/ucs/:id',
+      name: 'uc-detail',
+      component: UcDetailsView,
+      props: true 
     }
   ]
 })
