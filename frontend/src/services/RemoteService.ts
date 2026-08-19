@@ -10,6 +10,8 @@ import type UcDto from '../models/ucs/UcDto'
 import type CreateUcDto from '../models/ucs/CreateUcDto'
 import type UcMembershipDto from '@/models/ucmemberships/UcMembershipDto'
 import type AddMembershipDto from '@/models/ucmemberships/AddMembershipDto'
+import type TestDto from '@/models/evaluation/TestDto'
+import type CreateTestDto from '@/models/evaluation/CreateTestDto'
 
 const httpClient = axios.create()
 httpClient.defaults.timeout = 50000
@@ -87,6 +89,23 @@ export default class RemoteServices {
 
   static async removeUcMember(ucId: number, personId: number): Promise<void> {
     return httpClient.delete(`/ucs/${ucId}/members/${personId}`)
+  }
+
+  // Tests
+  static async getTests(ucId: number): Promise<TestDto[]> {
+    return httpClient.get(`/ucs/${ucId}/tests`)
+  }
+
+  static async createTest(ucId: number, dto: CreateTestDto): Promise<TestDto> {
+    return httpClient.post(`/ucs/${ucId}/tests`, dto)
+  }
+
+  static async updateTest(ucId: number, testId: number, dto: CreateTestDto): Promise<TestDto> {
+    return httpClient.put(`/ucs/${ucId}/tests/${testId}`, dto)
+  }
+
+  static async deleteTest(ucId: number, testId: number): Promise<void> {
+    return httpClient.delete(`/ucs/${ucId}/tests/${testId}`)
   }
 
   static async errorMessage(error: any): Promise<string> {

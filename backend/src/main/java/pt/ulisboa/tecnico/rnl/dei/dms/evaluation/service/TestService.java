@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.rnl.dei.dms.evaluation.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,10 @@ public class TestService {
 
     public TestDto createTest(long ucId, CreateTestDto dto, long requesterId) {
         Uc uc = fetchUcOrThrow(ucId);
+        if (dto.date() == null || dto.date().isBefore(LocalDate.now())) {
+            throw new DEIException(ErrorMessage.INVALID_TEST_DATA, "data não pode ser no passado");
+        }
+
         authorizeTestChange(uc, requesterId);
         validateWeightBudget(uc, dto.weight(), null);
 
@@ -90,6 +95,10 @@ public class TestService {
 
     public TestDto updateTest(long id, CreateTestDto dto, long requesterId) {
         Uc uc = fetchUcOrThrow(dto.ucId());
+        if (dto.date() == null || dto.date().isBefore(LocalDate.now())) {
+            throw new DEIException(ErrorMessage.INVALID_TEST_DATA, "data não pode ser no passado");
+        }
+
         authorizeTestChange(uc, requesterId);
 
         Test test = fetchTestOrThrow(id);

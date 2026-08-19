@@ -26,6 +26,7 @@ public enum ErrorMessage {
 	INVALID_PERSON_DATA("Dados de pessoa inválidos: %s", 1032),
 	INVALID_COURSE_DATA("Dados de curso inválidos: %s", 1033),
 	INVALID_UC_DATA("Dados de Uc inválidos: %s", 1034),
+	INVALID_TEST_DATA("Dados de Teste inválidos: %s", 1039),
 	NOT_AUTHORIZED("Não está autorizado a executar esta operação.", 1008),
 	MEMBERSHIP_ALREADY_EXISTS("A pessoa %s já é membro desta UC.", 1009),
 	IST_ID_ALREADY_EXISTS("Já existe uma pessoa com o IST ID %s", 1035),
@@ -39,7 +40,7 @@ public enum ErrorMessage {
 	REQUEST_ALREADY_REVIEWED("O pedido de revisão já foi visto", 1029),
 	REQUEST_ALREADY_DECIDED("O pedido de revisão já foi decidido", 1031),
 	MEMBER_NOT_STUDENT("A pessoa com ID %s não é estudante desta UC.", 1017),
-	WEIGHT_BUDGET_EXCEEDED("O peso total dos elementos de avaliação não pode excede 1.0", 1024);
+	WEIGHT_BUDGET_EXCEEDED("O peso total dos elementos de avaliação não pode exceder 1.0", 1024);
 
 	private final String label;
 	private final int code;
