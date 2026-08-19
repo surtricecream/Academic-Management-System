@@ -14,4 +14,5 @@ import pt.ulisboa.tecnico.rnl.dei.dms.person.domain.Person;
 public interface PersonRepository extends JpaRepository<Person, Long> {
 
     Optional<Person> findByEmail(String email);
+    Optional<Person> findByIstId(String istId);
 }

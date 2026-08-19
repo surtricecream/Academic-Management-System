@@ -53,6 +53,12 @@ public class UcService {
         }
     }
 
+    private void validateUcUniqueness(String code, Long excludeId) {
+        ucRepository.findByCode(code)
+                .filter(u -> excludeId == null || !u.getId().equals(excludeId))
+                .ifPresent(u -> { throw new DEIException(ErrorMessage.UC_CODE_ALREADY_EXISTS, code); });
+    }
+
     public List<UcDto> getUcs() {
         return ucRepository.findAll().stream()
             .map(UcDto::new)
@@ -61,6 +67,7 @@ public class UcService {
 
     public UcDto createUc(CreateUcDto ucDto) {
         validateUcData(ucDto);
+        validateUcUniqueness(ucDto.code(), null);
 
         Person regente = personRepository.findById(ucDto.regenteId())
             .orElseThrow(() -> new DEIException(ErrorMessage.NO_SUCH_PERSON, Long.toString(ucDto.regenteId())));
@@ -81,6 +88,7 @@ public class UcService {
 
     public UcDto updateUc(long id, CreateUcDto ucDto) {
         validateUcData(ucDto);
+        validateUcUniqueness(ucDto.code(), id);
 
         Person regente = personRepository.findById(ucDto.regenteId())
             .orElseThrow(() -> new DEIException(ErrorMessage.NO_SUCH_PERSON, Long.toString(ucDto.regenteId())));

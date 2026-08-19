@@ -39,6 +39,12 @@ public class CourseService {
         }
     }
 
+    private void validateCourseUniqueness(String code, Long excludeId) {
+        courseRepository.findByCode(code)
+                .filter(c -> excludeId == null || !c.getId().equals(excludeId))
+                .ifPresent(c -> { throw new DEIException(ErrorMessage.COURSE_CODE_ALREADY_EXISTS, code); });
+    }
+
     public List<CourseDto> getCourses() {
         return courseRepository.findAll().stream()
                 .map(CourseDto::new)
@@ -47,6 +53,7 @@ public class CourseService {
 
     public CourseDto createCourse(CourseDto courseDto) {
         validateCourseData(courseDto);
+        validateCourseUniqueness(courseDto.code(), null);
 
         Course course = new Course(courseDto);
         course.setId(null);
@@ -59,6 +66,7 @@ public class CourseService {
 
     public CourseDto updateCourse(long id, CourseDto courseDto) {
         validateCourseData(courseDto);
+        validateCourseUniqueness(courseDto.code(), id);
 
         Course course = catchCourseOrThrow(id);
             course.setCode(courseDto.code());

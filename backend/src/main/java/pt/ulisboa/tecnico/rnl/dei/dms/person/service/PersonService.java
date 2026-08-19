@@ -50,6 +50,12 @@ public class PersonService {
     	if (dto.type() == null) {
     	    throw new DEIException(ErrorMessage.INVALID_PERSON_DATA, "tipo em falta");
     	}
+		if (personRepository.findByIstId(dto.istId()).isPresent()) {
+		    throw new DEIException(ErrorMessage.IST_ID_ALREADY_EXISTS, dto.istId());
+		}
+		if (personRepository.findByEmail(dto.email()).isPresent()) {
+		    throw new DEIException(ErrorMessage.EMAIL_ALREADY_EXISTS, dto.email());
+		}
 	}
 
 	private void validateUpdatePersonData(PersonDto dto) {
@@ -65,6 +71,15 @@ public class PersonService {
 	    if (dto.type() == null || dto.type().isBlank()) {
 	        throw new DEIException(ErrorMessage.INVALID_PERSON_DATA, "tipo em falta");
 	    }
+	}
+
+	private void validateUpdatePersonUniqueness(PersonDto dto, long excludeId) {
+		personRepository.findByIstId(dto.istId())
+	            .filter(p -> !p.getId().equals(excludeId))
+	            .ifPresent(p -> { throw new DEIException(ErrorMessage.IST_ID_ALREADY_EXISTS, dto.istId()); });
+	    personRepository.findByEmail(dto.email())
+	            .filter(p -> !p.getId().equals(excludeId))
+	            .ifPresent(p -> { throw new DEIException(ErrorMessage.EMAIL_ALREADY_EXISTS, dto.email()); });
 	}
 
 	@Transactional
@@ -92,6 +107,7 @@ public class PersonService {
 	@Transactional
 	public PersonDto updatePerson(long id, PersonDto personDto) {
 		validateUpdatePersonData(personDto);
+		validateUpdatePersonUniqueness(personDto, id);
 
 		Person person = fetchPersonOrThrow(id); 
 		    person.setName(personDto.name());
