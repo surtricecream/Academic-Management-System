@@ -12,6 +12,8 @@ import type UcMembershipDto from '@/models/ucmemberships/UcMembershipDto'
 import type AddMembershipDto from '@/models/ucmemberships/AddMembershipDto'
 import type TestDto from '@/models/evaluation/TestDto'
 import type CreateTestDto from '@/models/evaluation/CreateTestDto'
+import type ProjectDto from '@/models/evaluation/ProjectDto'
+import type CreateProjectDto from '@/models/evaluation/CreateProjectDto'
 
 const httpClient = axios.create()
 httpClient.defaults.timeout = 50000
@@ -106,6 +108,20 @@ export default class RemoteServices {
 
   static async deleteTest(ucId: number, testId: number): Promise<void> {
     return httpClient.delete(`/ucs/${ucId}/tests/${testId}`)
+  }
+
+  // Projects
+  static async getProjects(ucId: number): Promise<ProjectDto[]> {
+    return httpClient.get(`/ucs/${ucId}/projects`)
+  }
+  static async createProject(ucId: number, dto: CreateProjectDto): Promise<ProjectDto> {
+    return httpClient.post(`/ucs/${ucId}/projects`, dto)
+  }
+  static async updateProject(ucId: number, projectId: number, dto: CreateProjectDto): Promise<ProjectDto> {
+    return httpClient.put(`/ucs/${ucId}/projects/${projectId}`, dto)
+  }
+  static async deleteProject(ucId: number, projectId: number): Promise<void> {
+    return httpClient.delete(`/ucs/${ucId}/projects/${projectId}`)
   }
 
   static async errorMessage(error: any): Promise<string> {

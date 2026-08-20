@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.rnl.dei.dms.evaluation.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,14 @@ public class ProjectService {
         }
     }
 
+    private void validateProjectTitleUniqueness(long ucId, String title, Long excludeProjectId) {
+        boolean exists = projectRepository.findByUcId(ucId).stream()
+                .anyMatch(p -> p.getTitle().equals(title) && (excludeProjectId == null || !p.getId().equals(excludeProjectId)));
+        if (exists) {
+            throw new DEIException(ErrorMessage.PROJECT_TITLE_ALREADY_EXISTS, title);
+        }
+    }
+
     public List<ProjectDto> getProjectsByUc(long ucId) {
         fetchUcOrThrow(ucId);
 
@@ -83,7 +92,17 @@ public class ProjectService {
 
     public ProjectDto createProject(long ucId, CreateProjectDto dto, long requesterId) {
         Uc uc = fetchUcOrThrow(ucId);
+
         authorizeProjectChange(uc, requesterId);
+        validateProjectTitleUniqueness(ucId, dto.title(), null);
+
+        if (dto.deadline() == null || dto.deadline().isBefore(LocalDate.now())) {
+            throw new DEIException(ErrorMessage.INVALID_PROJECT_DATA, "prazo não pode ser no passado");
+        }
+        if (dto.weight() == null || dto.weight() < 0.05 || dto.weight() > 1.0) {
+            throw new DEIException(ErrorMessage.INVALID_PROJECT_DATA, "peso deve ser entre 0.05 e 1.0");
+        }
+
         validateWeightBudget(uc, dto.weight(), null);
 
         if (Boolean.TRUE.equals(dto.isGroupProject()) && dto.maxGroupSize() == null) {
@@ -97,14 +116,23 @@ public class ProjectService {
 
     public ProjectDto updateProject(long id, CreateProjectDto dto, long requesterId) {
         Uc uc = fetchUcOrThrow(dto.ucId());
-        authorizeProjectChange(uc, requesterId);
-
         Project project = fetchProjectOrThrow(id);
-        if (!project.getUc().getId().equals(uc.getId())) {
-            throw new DEIException(ErrorMessage.NO_SUCH_PROJECT);
+
+        authorizeProjectChange(uc, requesterId);
+        validateProjectTitleUniqueness(dto.ucId(), dto.title(), id);
+
+        if (dto.deadline() == null || dto.deadline().isBefore(LocalDate.now())) {
+            throw new DEIException(ErrorMessage.INVALID_PROJECT_DATA, "prazo não pode ser no passado");
+        }
+        if (dto.weight() == null || dto.weight() < 0.05 || dto.weight() > 1.0) {
+            throw new DEIException(ErrorMessage.INVALID_PROJECT_DATA, "peso deve ser entre 0.05 e 1.0");
         }
 
         validateWeightBudget(uc, dto.weight(), id);
+
+        if (!project.getUc().getId().equals(uc.getId())) {
+            throw new DEIException(ErrorMessage.NO_SUCH_PROJECT);
+        }
 
         project.setTitle(dto.title());
         project.setDeadline(dto.deadline());

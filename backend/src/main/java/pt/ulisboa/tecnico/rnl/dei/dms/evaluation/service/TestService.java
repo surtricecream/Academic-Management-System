@@ -92,7 +92,6 @@ public class TestService {
 
     public TestDto createTest(long ucId, CreateTestDto dto, long requesterId) {
         Uc uc = fetchUcOrThrow(ucId);
-        Test test = new Test(dto.title(), dto.date(), dto.weight(), uc);
 
         authorizeTestChange(uc, requesterId);
         validateTestTitleUniqueness(ucId, dto.title(), null);
@@ -106,6 +105,7 @@ public class TestService {
 
         validateWeightBudget(uc, dto.weight(), null);
 
+        Test test = new Test(dto.title(), dto.date(), dto.weight(), uc);
         return new TestDto(testRepository.save(test));
     }
 

@@ -19,7 +19,7 @@
         <UcTestsTab :ucId="Number(id)" />
       </v-window-item>
       <v-window-item value="projects">
-        <p class="pa-4">TODO: Projects tab</p>
+        <UcProjectsTab :ucId="Number(id)" />
       </v-window-item>
     </v-window>
   </div>
@@ -31,6 +31,7 @@ import type UcDto from '@/models/ucs/UcDto'
 import RemoteService from '@/services/RemoteService'
 import UcMembersTab from './UcMembersTab.vue'
 import UcTestsTab from './UcTestsTab.vue'
+import UcProjectsTab from './UcProjectsTab.vue'
 
 const props = defineProps<{ id: string }>()
 const uc = ref<UcDto | null>(null)
