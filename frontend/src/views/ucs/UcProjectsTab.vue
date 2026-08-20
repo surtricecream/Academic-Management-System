@@ -76,7 +76,14 @@
       <v-icon @click="editProject(item)" class="mr-2">mdi-pencil</v-icon>
       <v-icon @click="promptDelete(item)">mdi-delete</v-icon>
     </template>
+
+    <template v-slot:[`item.actions`]="{ item }">
+      <v-icon v-if="item.isGroupProject" @click="openGroups(item)" class="mr-2">mdi-account-group</v-icon>
+      <v-icon @click="editProject(item)" class="mr-2">mdi-pencil</v-icon>
+      <v-icon @click="promptDelete(item)">mdi-delete</v-icon>
+    </template>
   </v-data-table>
+
 
   <v-dialog v-model="editDialog" max-width="450">
     <v-card prepend-icon="mdi-pencil" title="Editar Projeto">
@@ -117,6 +124,13 @@
     :message="`Tem a certeza que quer eliminar '${projectToDelete?.title}'?`"
     @confirm="confirmDelete"
   />
+
+  <ProjectGroupsDialog
+    v-model="groupsDialogOpen"
+    :projectId="selectedProject?.id ?? 0"
+    :projectTitle="selectedProject?.title ?? ''"
+    :ucId="props.ucId"
+  />
 </template>
 
 <script setup lang="ts">
@@ -125,6 +139,7 @@ import type ProjectDto from '@/models/evaluation/ProjectDto'
 import type CreateProjectDto from '@/models/evaluation/CreateProjectDto'
 import RemoteService from '@/services/RemoteService'
 import ConfirmDialog from '@/components/ConfirmDialog.vue'
+import ProjectGroupsDialog from './ProjectGroupsDialog.vue'
 
 const props = defineProps<{ ucId: number }>()
 
@@ -157,6 +172,14 @@ const newProject = ref<CreateProjectDto>({
   maxGroupSize: undefined,
   ucId: props.ucId
 })
+
+const groupsDialogOpen = ref(false)
+const selectedProject = ref<ProjectDto | null>(null)
+  
+const openGroups = (project: ProjectDto) => {
+  selectedProject.value = project
+  groupsDialogOpen.value = true
+}
 
 const saveProject = async () => {
   await RemoteService.createProject(props.ucId, newProject.value)

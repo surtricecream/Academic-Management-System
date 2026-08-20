@@ -14,6 +14,8 @@ import type TestDto from '@/models/evaluation/TestDto'
 import type CreateTestDto from '@/models/evaluation/CreateTestDto'
 import type ProjectDto from '@/models/evaluation/ProjectDto'
 import type CreateProjectDto from '@/models/evaluation/CreateProjectDto'
+import type ProjectGroupDto from '@/models/evaluation/ProjectGroupDto'
+import type CreateProjectGroupDto from '@/models/evaluation/CreateProjectGroupDto'
 
 const httpClient = axios.create()
 httpClient.defaults.timeout = 50000
@@ -122,6 +124,20 @@ export default class RemoteServices {
   }
   static async deleteProject(ucId: number, projectId: number): Promise<void> {
     return httpClient.delete(`/ucs/${ucId}/projects/${projectId}`)
+  }
+
+  // Group Projects
+  static async getGroups(projectId: number): Promise<ProjectGroupDto[]> {
+    return httpClient.get(`/projects/${projectId}/groups`)
+  }
+  static async createGroup(projectId: number, dto: CreateProjectGroupDto): Promise<ProjectGroupDto> {
+    return httpClient.post(`/projects/${projectId}/groups`, dto)
+  }
+  static async autoAssignGroups(projectId: number): Promise<ProjectGroupDto[]> {
+    return httpClient.post(`/projects/${projectId}/groups/auto-assign`, {})
+  }
+  static async deleteGroup(projectId: number, groupId: number): Promise<void> {
+    return httpClient.delete(`/projects/${projectId}/groups/${groupId}`)
   }
 
   static async errorMessage(error: any): Promise<string> {
