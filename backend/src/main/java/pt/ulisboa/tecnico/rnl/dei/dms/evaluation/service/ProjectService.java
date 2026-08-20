@@ -64,8 +64,10 @@ public class ProjectService {
                 .filter(p -> excludeProjectId == null || !p.getId().equals(excludeProjectId))
                 .mapToDouble(Project::getWeight).sum();
 
-        if (existingTestWeight + existingProjectWeight + newWeight > 1.0001) {
-            throw new DEIException(ErrorMessage.WEIGHT_BUDGET_EXCEEDED);
+        double remaining = 1.0 - existingTestWeight - existingProjectWeight;
+        
+        if (newWeight > remaining + 0.0001) {
+            throw new DEIException(ErrorMessage.WEIGHT_BUDGET_EXCEEDED, String.format("%.2f", remaining));
         }
     }
 

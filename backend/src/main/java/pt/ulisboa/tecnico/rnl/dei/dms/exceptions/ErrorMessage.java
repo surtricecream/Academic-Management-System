@@ -33,6 +33,7 @@ public enum ErrorMessage {
 	EMAIL_ALREADY_EXISTS("Já existe uma pessoa com o email %s", 1036),
 	COURSE_CODE_ALREADY_EXISTS("Já existe um curso com o código %s", 1037),
 	UC_CODE_ALREADY_EXISTS("Já existe uma UC com o código %s", 1038),
+	TEST_TITLE_ALREADY_EXISTS("Já existe um teste com o título %s nesta UC", 1040),
 	GROUP_NOT_ALLOWED("Este projeto não permite grupos", 1014),
 	GROUP_SIZE_EXCEEDED("O grupo excede o tamanho máximo permitido.", 1015),
 	GROUPS_ALREADY_EXIST("Os grupos para este projeto já estão feitos", 1019),
@@ -40,7 +41,7 @@ public enum ErrorMessage {
 	REQUEST_ALREADY_REVIEWED("O pedido de revisão já foi visto", 1029),
 	REQUEST_ALREADY_DECIDED("O pedido de revisão já foi decidido", 1031),
 	MEMBER_NOT_STUDENT("A pessoa com ID %s não é estudante desta UC.", 1017),
-	WEIGHT_BUDGET_EXCEEDED("O peso total dos elementos de avaliação não pode exceder 1.0", 1024);
+	WEIGHT_BUDGET_EXCEEDED("O peso excede o disponível. Peso restante: %s", 1024);
 
 	private final String label;
 	private final int code;

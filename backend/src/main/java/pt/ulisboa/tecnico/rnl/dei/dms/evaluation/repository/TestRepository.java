@@ -11,5 +11,7 @@ import pt.ulisboa.tecnico.rnl.dei.dms.evaluation.domain.Test;
 @Repository
 @Transactional
 public interface TestRepository extends JpaRepository<Test, Long> {
+
     List<Test> findByUcId(Long ucId);
+    List<Test> findByUcIdAndTitle(Long ucId, String title);
 }

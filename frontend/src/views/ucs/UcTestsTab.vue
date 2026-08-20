@@ -21,13 +21,15 @@
               <v-text-field label="Título*" required v-model="newTest.title"></v-text-field>
               <v-text-field label="Data*" required type="date" :min="today" v-model="newTest.date"></v-text-field>
               <v-text-field
-                label="Peso* (0 a 1)"
-                placeholder="Ex: 0.3"
-                required
-                type="number"
-                step="0.01"
-                v-model.number="newTest.weight"
-              ></v-text-field>
+              label="Peso* (0.05 a 1)"
+              placeholder="Ex: 0.3"
+              required
+              type="number"
+              step="0.01"
+              min="0.05"
+              max="1"
+              v-model.number="newTest.weight"
+            ></v-text-field>
             </v-card-text>
             <v-divider></v-divider>
             <v-card-actions>
@@ -67,12 +69,15 @@
     <v-card prepend-icon="mdi-pencil" title="Editar Teste">
       <v-card-text>
         <v-text-field label="Título*" required v-model="editingTest.title"></v-text-field>
-        <v-text-field label="Data*" required type="date" v-model="editingTest.date"></v-text-field>
+        <v-text-field label="Data*" required type="date" :min="today" v-model="editingTest.date"></v-text-field>
         <v-text-field
-          label="Peso* (0 a 1)"
+          label="Peso* (0.05 a 1)"
+          placeholder="Ex: 0.3"
           required
           type="number"
           step="0.01"
+          min="0.05"
+          max="1"
           v-model.number="editingTest.weight"
         ></v-text-field>
       </v-card-text>

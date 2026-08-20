@@ -65,8 +65,18 @@ public class TestService {
         double existingProjectWeight = projectRepository.findByUcId(uc.getId()).stream()
                 .mapToDouble(Project::getWeight).sum();
 
-        if (existingTestWeight + existingProjectWeight + newWeight > 1.0001) { // float rounding
-            throw new DEIException(ErrorMessage.WEIGHT_BUDGET_EXCEEDED);
+        double remaining = 1.0 - existingTestWeight - existingProjectWeight;
+
+        if (newWeight > remaining + 0.0001) {
+            throw new DEIException(ErrorMessage.WEIGHT_BUDGET_EXCEEDED, String.format("%.2f", remaining));
+        }
+    }
+
+    private void validateTestTitleUniqueness(long ucId, String title, Long excludeTestId) {
+        boolean exists = testRepository.findByUcIdAndTitle(ucId, title).stream()
+                .anyMatch(t -> excludeTestId == null || !t.getId().equals(excludeTestId));
+        if (exists) {
+            throw new DEIException(ErrorMessage.TEST_TITLE_ALREADY_EXISTS, title);
         }
     }
 
@@ -82,31 +92,42 @@ public class TestService {
 
     public TestDto createTest(long ucId, CreateTestDto dto, long requesterId) {
         Uc uc = fetchUcOrThrow(ucId);
+        Test test = new Test(dto.title(), dto.date(), dto.weight(), uc);
+
+        authorizeTestChange(uc, requesterId);
+        validateTestTitleUniqueness(ucId, dto.title(), null);
+
         if (dto.date() == null || dto.date().isBefore(LocalDate.now())) {
             throw new DEIException(ErrorMessage.INVALID_TEST_DATA, "data não pode ser no passado");
         }
+        if (dto.weight() == null || dto.weight() < 0.05 || dto.weight() > 1.0) {
+            throw new DEIException(ErrorMessage.INVALID_TEST_DATA, "peso deve ser entre 0.05 e 1.0");
+        }
 
-        authorizeTestChange(uc, requesterId);
         validateWeightBudget(uc, dto.weight(), null);
 
-        Test test = new Test(dto.title(), dto.date(), dto.weight(), uc);
         return new TestDto(testRepository.save(test));
     }
 
     public TestDto updateTest(long id, CreateTestDto dto, long requesterId) {
         Uc uc = fetchUcOrThrow(dto.ucId());
+        Test test = fetchTestOrThrow(id);
+
+        authorizeTestChange(uc, requesterId);
+        validateTestTitleUniqueness(dto.ucId(), dto.title(), id);
+
         if (dto.date() == null || dto.date().isBefore(LocalDate.now())) {
             throw new DEIException(ErrorMessage.INVALID_TEST_DATA, "data não pode ser no passado");
         }
-
-        authorizeTestChange(uc, requesterId);
-
-        Test test = fetchTestOrThrow(id);
-        if (!test.getUc().getId().equals(uc.getId())) {
-            throw new DEIException(ErrorMessage.NO_SUCH_TEST);
+        if (dto.weight() == null || dto.weight() < 0.05 || dto.weight() > 1.0) {
+            throw new DEIException(ErrorMessage.INVALID_TEST_DATA, "peso deve ser entre 0.05 e 1.0");
         }
 
         validateWeightBudget(uc, dto.weight(), id);
+
+        if (!test.getUc().getId().equals(uc.getId())) {
+            throw new DEIException(ErrorMessage.NO_SUCH_TEST);
+        }
 
         test.setTitle(dto.title());
         test.setDate(dto.date());
