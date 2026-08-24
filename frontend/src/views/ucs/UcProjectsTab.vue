@@ -30,7 +30,10 @@
                 max="1"
                 v-model.number="newProject.weight"
               ></v-text-field>
-              <v-checkbox label="Projeto em grupo" v-model="newProject.isGroupProject"></v-checkbox>
+              <v-btn-toggle v-model="newProject.isGroupProject" mandatory color="primary" class="mb-4">
+                <v-btn :value="false">Individual</v-btn>
+                <v-btn :value="true">Grupo</v-btn>
+              </v-btn-toggle>
               <v-text-field
                 v-if="newProject.isGroupProject"
                 label="Tamanho máximo do grupo*"
@@ -175,7 +178,7 @@ const newProject = ref<CreateProjectDto>({
 
 const groupsDialogOpen = ref(false)
 const selectedProject = ref<ProjectDto | null>(null)
-  
+
 const openGroups = (project: ProjectDto) => {
   selectedProject.value = project
   groupsDialogOpen.value = true

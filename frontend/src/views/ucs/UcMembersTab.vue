@@ -29,9 +29,10 @@
                   :items="filteredPeople"
                   item-title="name"
                   item-value="id"
-                  label="Pessoa*"
+                  label="Pessoas*"
+                  multiple
                   required
-                  v-model="newMember.personId"
+                  v-model="selectedPersonIds"
                 ></v-select>
             </v-card-text>
             </v-card-text>
@@ -134,10 +135,14 @@ watch(selectedRole, () => {
   newMember.value.personId = undefined
 })
 
+const selectedPersonIds = ref<number[]>([])
+
 const saveMember = async () => {
-  newMember.value.role = roleMappings[selectedRole.value]
-  await RemoteService.addUcMember(props.ucId, newMember.value)
-  newMember.value = { personId: undefined, role: '' }
+  const role = roleMappings[selectedRole.value]
+  for (const personId of selectedPersonIds.value) {
+    await RemoteService.addUcMember(props.ucId, { personId, role })
+  }
+  selectedPersonIds.value = []
   selectedRole.value = ''
   await getMembers()
 }

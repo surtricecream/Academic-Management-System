@@ -4,7 +4,11 @@
       <v-card-text>
         <v-row align="center" class="mb-2">
           <v-col cols="auto">
-            <v-btn size="small" color="primary" @click="showCreateForm = !showCreateForm">
+            <v-btn
+              size="small"
+              :color="showCreateForm ? 'primary' : 'default'"
+              @click="showCreateForm = !showCreateForm"
+            >
               Criar Grupo Manualmente
             </v-btn>
           </v-col>
@@ -29,9 +33,9 @@
         </div>
 
         <v-list>
-          <v-list-item v-for="group in groups" :key="group.id">
+          <v-list-item v-for="(group, index) in groups" :key="group.id">
             <v-list-item-title>
-              Grupo {{ group.id }}: {{ group.memberNames?.join(', ') }}
+              Grupo {{ index + 1 }}: {{ group.memberNames?.join(', ') }}
             </v-list-item-title>
             <template v-slot:append>
               <v-icon @click="promptDelete(group)">mdi-delete</v-icon>

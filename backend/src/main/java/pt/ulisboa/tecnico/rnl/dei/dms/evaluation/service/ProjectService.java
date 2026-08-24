@@ -108,6 +108,9 @@ public class ProjectService {
         if (Boolean.TRUE.equals(dto.isGroupProject()) && dto.maxGroupSize() == null) {
             throw new DEIException(ErrorMessage.INVALID_GROUP_SIZE);
         }
+        if (Boolean.TRUE.equals(dto.isGroupProject()) && (dto.maxGroupSize() == null || dto.maxGroupSize() < 2)) {
+            throw new DEIException(ErrorMessage.INVALID_GROUP_SIZE);
+        }
 
         Project project = new Project(dto.title(), dto.deadline(), dto.weight(),
                             dto.isGroupProject(), dto.maxGroupSize(), uc);
@@ -132,6 +135,9 @@ public class ProjectService {
 
         if (!project.getUc().getId().equals(uc.getId())) {
             throw new DEIException(ErrorMessage.NO_SUCH_PROJECT);
+        }
+        if (Boolean.TRUE.equals(dto.isGroupProject()) && (dto.maxGroupSize() == null || dto.maxGroupSize() < 2)) {
+            throw new DEIException(ErrorMessage.INVALID_GROUP_SIZE);
         }
 
         project.setTitle(dto.title());
