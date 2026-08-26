@@ -16,6 +16,7 @@ import type ProjectDto from '@/models/evaluation/ProjectDto'
 import type CreateProjectDto from '@/models/evaluation/CreateProjectDto'
 import type ProjectGroupDto from '@/models/evaluation/ProjectGroupDto'
 import type CreateProjectGroupDto from '@/models/evaluation/CreateProjectGroupDto'
+import type CreateGradeDto from '@/models/evaluation/CreateGradeDto'
 
 const httpClient = axios.create()
 httpClient.defaults.timeout = 50000
@@ -138,6 +139,20 @@ export default class RemoteServices {
   }
   static async deleteGroup(projectId: number, groupId: number): Promise<void> {
     return httpClient.delete(`/projects/${projectId}/groups/${groupId}`)
+  }
+
+  // Grades
+  static async gradeTest(testId: number, dto: CreateGradeDto): Promise<any> {
+    return httpClient.post(`/api/tests/${testId}/grade`, dto)
+  }
+  static async gradeIndividualProject(projectId: number, dto: CreateGradeDto): Promise<any> {
+    return httpClient.post(`/api/projects/${projectId}/grade/individual`, dto)
+  }
+  static async gradeGroupProject(projectId: number, dto: CreateGradeDto): Promise<any> {
+    return httpClient.post(`/api/projects/${projectId}/grade/group`, dto)
+  }
+  static async getStudentGrades(ucId: number, personId: number): Promise<any> {
+    return httpClient.get(`/api/ucs/${ucId}/students/${personId}/grades`)
   }
 
   static async errorMessage(error: any): Promise<string> {

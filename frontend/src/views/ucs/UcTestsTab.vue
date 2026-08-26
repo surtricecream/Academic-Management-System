@@ -21,15 +21,15 @@
               <v-text-field label="Título*" required v-model="newTest.title"></v-text-field>
               <v-text-field label="Data*" required type="date" :min="today" v-model="newTest.date"></v-text-field>
               <v-text-field
-              label="Peso* (0.05 a 1)"
-              placeholder="Ex: 0.3"
-              required
-              type="number"
-              step="0.01"
-              min="0.05"
-              max="1"
-              v-model.number="newTest.weight"
-            ></v-text-field>
+                label="Peso* (0.05 a 1)"
+                placeholder="Ex: 0.3"
+                required
+                type="number"
+                step="0.01"
+                min="0.05"
+                max="1"
+                v-model.number="newTest.weight"
+              ></v-text-field>
             </v-card-text>
             <v-divider></v-divider>
             <v-card-actions>
@@ -60,6 +60,7 @@
     no-data-text="Sem testes a apresentar."
   >
     <template v-slot:[`item.actions`]="{ item }">
+      <v-icon @click="openGrading(item)" class="mr-2">mdi-clipboard-check</v-icon>
       <v-icon @click="editTest(item)" class="mr-2">mdi-pencil</v-icon>
       <v-icon @click="promptDelete(item)">mdi-delete</v-icon>
     </template>
@@ -72,7 +73,6 @@
         <v-text-field label="Data*" required type="date" :min="today" v-model="editingTest.date"></v-text-field>
         <v-text-field
           label="Peso* (0.05 a 1)"
-          placeholder="Ex: 0.3"
           required
           type="number"
           step="0.01"
@@ -96,6 +96,13 @@
     :message="`Tem a certeza que quer eliminar '${testToDelete?.title}'?`"
     @confirm="confirmDelete"
   />
+
+  <TestGradeDialog
+    v-model="gradeDialogOpen"
+    :testId="selectedTest?.id ?? 0"
+    :testTitle="selectedTest?.title ?? ''"
+    :ucId="props.ucId"
+  />
 </template>
 
 <script setup lang="ts">
@@ -104,11 +111,13 @@ import type TestDto from '@/models/evaluation/TestDto'
 import type CreateTestDto from '@/models/evaluation/CreateTestDto'
 import RemoteService from '@/services/RemoteService'
 import ConfirmDialog from '@/components/ConfirmDialog.vue'
+import TestGradeDialog from './TestGradeDialog.vue'
 
 const props = defineProps<{ ucId: number }>()
 
 const loading = ref(true)
 const tests = ref<TestDto[]>([])
+const today = new Date().toISOString().split('T')[0]
 
 const headers = [
   { title: 'ID', key: 'id', value: 'id', sortable: true },
@@ -127,7 +136,6 @@ async function getTests() {
 
 const createDialog = ref(false)
 const newTest = ref<CreateTestDto>({ title: '', date: '', weight: undefined, ucId: props.ucId })
-const today = new Date().toISOString().split('T')[0]
 
 const saveTest = async () => {
   await RemoteService.createTest(props.ucId, newTest.value)
@@ -166,5 +174,13 @@ const promptDelete = (test: TestDto) => {
 const confirmDelete = async () => {
   await RemoteService.deleteTest(props.ucId, testToDelete.value!.id!)
   await getTests()
+}
+
+const gradeDialogOpen = ref(false)
+const selectedTest = ref<TestDto | null>(null)
+
+const openGrading = (test: TestDto) => {
+  selectedTest.value = test
+  gradeDialogOpen.value = true
 }
 </script>
