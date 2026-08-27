@@ -76,11 +76,7 @@
       <v-chip v-else color="grey" text-color="white">Individual</v-chip>
     </template>
     <template v-slot:[`item.actions`]="{ item }">
-      <v-icon @click="editProject(item)" class="mr-2">mdi-pencil</v-icon>
-      <v-icon @click="promptDelete(item)">mdi-delete</v-icon>
-    </template>
-
-    <template v-slot:[`item.actions`]="{ item }">
+      <v-icon @click="openGrading(item)" class="mr-2">mdi-clipboard-check</v-icon>
       <v-icon v-if="item.isGroupProject" @click="openGroups(item)" class="mr-2">mdi-account-group</v-icon>
       <v-icon @click="editProject(item)" class="mr-2">mdi-pencil</v-icon>
       <v-icon @click="promptDelete(item)">mdi-delete</v-icon>
@@ -134,7 +130,17 @@
     :projectTitle="selectedProject?.title ?? ''"
     :ucId="props.ucId"
   />
+
+  <ProjectGradeDialog
+    v-model="gradeDialogOpen"
+    :projectId="selectedProject?.id ?? 0"
+    :projectTitle="selectedProject?.title ?? ''"
+    :isGroupProject="selectedProject?.isGroupProject ?? false"
+    :ucId="props.ucId"
+  />
 </template>
+
+  
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
@@ -143,6 +149,7 @@ import type CreateProjectDto from '@/models/evaluation/CreateProjectDto'
 import RemoteService from '@/services/RemoteService'
 import ConfirmDialog from '@/components/ConfirmDialog.vue'
 import ProjectGroupsDialog from './ProjectGroupsDialog.vue'
+import ProjectGradeDialog from './ProjectGradeDialog.vue'
 
 const props = defineProps<{ ucId: number }>()
 
@@ -223,5 +230,12 @@ const promptDelete = (project: ProjectDto) => {
 const confirmDelete = async () => {
   await RemoteService.deleteProject(props.ucId, projectToDelete.value!.id!)
   await getProjects()
+}
+
+const gradeDialogOpen = ref(false)
+
+const openGrading = (project: ProjectDto) => {
+  selectedProject.value = project
+  gradeDialogOpen.value = true
 }
 </script>
