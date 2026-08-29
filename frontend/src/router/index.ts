@@ -7,6 +7,7 @@ import LoginView from '../views/LoginView.vue'
 import CoursesView from '@/views/courses/CoursesView.vue'
 import UcsView from '@/views/ucs/UcsView.vue'
 import UcDetailsView from '@/views/ucs/UcDetailsView.vue'
+import StudentProfileView from '@/views/profile/StudentProfileView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,6 +47,10 @@ const router = createRouter({
       name: 'uc-detail',
       component: UcDetailsView,
       props: true 
+    },
+    { path: '/my-profile',
+      name: 'my-profile',
+      component: StudentProfileView
     }
   ]
 })
