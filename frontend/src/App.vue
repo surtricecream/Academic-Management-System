@@ -7,8 +7,8 @@
     >
       <v-card class="elevation-4 pa-8" width="100%">
         <ErrorMessage />
+        <SuccessMessage />
         <LoadingOverlay />
-
         <RouterView />
       </v-card>
     </v-main>
@@ -19,6 +19,7 @@
 import TopBar from '@/components/TopBar.vue'
 import ErrorMessage from '@/components/ErrorMessage.vue';
 import LoadingOverlay from '@/components/LoadingOverlay.vue';
+import SuccessMessage from './components/SuccessMessage.vue';
 
 import { RouterView } from 'vue-router'
 

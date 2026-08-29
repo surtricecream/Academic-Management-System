@@ -7,6 +7,7 @@ export const useAppearanceStore = defineStore('appearance', {
     currentTheme: 'light',
     isDarkTheme: false,
     errorMessagesStack: reactive([]) as string[],
+    successMessage: null as string | null,
     loading: ref(false),
     windowWidth: ref(window.innerWidth)
   }),
@@ -35,6 +36,12 @@ export const useAppearanceStore = defineStore('appearance', {
     },
     clearErrors() {
       this.errorMessagesStack = reactive([])
+    },
+    pushSuccess(message: string) {
+      this.successMessage = message
+      setTimeout(() => {
+        this.successMessage = null
+      }, 3000)
     }
   },
   persist: true

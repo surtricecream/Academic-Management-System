@@ -65,6 +65,7 @@ import { ref, reactive, watch } from 'vue'
 import type PersonDto from '@/models/people/PersonDto'
 import type ProjectGroupDto from '@/models/evaluation/ProjectGroupDto'
 import RemoteService from '@/services/RemoteService'
+import { useAppearanceStore } from '@/stores/appearance'
 
 const props = defineProps<{
   modelValue: boolean
@@ -89,6 +90,8 @@ const groups = ref<ProjectGroupDto[]>([])
 const groupScores = reactive<Record<number, number>>({})
 
 async function loadData() {
+  Object.keys(scores).forEach((key) => delete scores[Number(key)])
+
   if (props.isGroupProject) {
     groups.value = await RemoteService.getGroups(props.projectId)
     for (const group of groups.value) {
@@ -109,6 +112,8 @@ async function loadData() {
   }
 }
 
+const appearanceStore = useAppearanceStore()
+
 const saveIndividualGrade = async (personId: number) => {
   await RemoteService.gradeIndividualProject(props.projectId, {
     testId: null,
@@ -117,6 +122,7 @@ const saveIndividualGrade = async (personId: number) => {
     groupId: null,
     score: scores[personId]
   })
+  appearanceStore.pushSuccess('Nota atribuída com sucesso')
 }
 
 const saveGroupGrade = async (groupId: number) => {
@@ -127,5 +133,6 @@ const saveGroupGrade = async (groupId: number) => {
     groupId,
     score: groupScores[groupId]
   })
+  appearanceStore.pushSuccess('Nota atribuída com sucesso')
 }
 </script>

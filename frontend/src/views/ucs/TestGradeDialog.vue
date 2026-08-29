@@ -44,6 +44,7 @@
 import { ref, reactive, watch } from 'vue'
 import type PersonDto from '@/models/people/PersonDto'
 import RemoteService from '@/services/RemoteService'
+import { useAppearanceStore } from '@/stores/appearance'
 
 const props = defineProps<{
   modelValue: boolean
@@ -64,6 +65,8 @@ const students = ref<PersonDto[]>([])
 const scores = reactive<Record<number, number>>({})
 
 async function loadData() {
+  Object.keys(scores).forEach((key) => delete scores[Number(key)])
+
   const members = await RemoteService.getUcMembers(props.ucId)
   const aluno = members.filter((m) => m.role === 'ALUNO')
   students.value = aluno.map((m) => ({ id: m.personId, name: m.personName }))
@@ -77,6 +80,8 @@ async function loadData() {
   }
 }
 
+const appearanceStore = useAppearanceStore()
+
 const saveGrade = async (personId: number) => {
   await RemoteService.gradeTest(props.testId, {
     testId: props.testId,
@@ -85,5 +90,8 @@ const saveGrade = async (personId: number) => {
     groupId: null,
     score: scores[personId]
   })
+  console.log('about to push success')
+  appearanceStore.pushSuccess('Nota atribuída com sucesso')
+  console.log('pushed, current value:', appearanceStore.successMessage)
 }
 </script>
