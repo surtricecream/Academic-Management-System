@@ -19,6 +19,8 @@ import type CreateProjectGroupDto from '@/models/evaluation/CreateProjectGroupDt
 import type CreateGradeDto from '@/models/evaluation/CreateGradeDto'
 import type StudentGradesDto from '@/models/evaluation/StudentGradesDto'
 import type StudentProfileDto from '@/models/evaluation/StudentProfileDto'
+import type ReviewRequestDto from '@/models/evaluation/ReviewRequestDto'
+import type CreateReviewRequestDto from '@/models/evaluation/CreateReviewRequestDto'
 
 const httpClient = axios.create()
 httpClient.defaults.timeout = 50000
@@ -170,6 +172,23 @@ export default class RemoteServices {
   // Student Profile
   static async getMyProfile(personId: number): Promise<StudentProfileDto> {
     return httpClient.get(`/api/students/${personId}/profile`)
+  }
+
+  // Reviews
+  static async createReviewRequest(dto: CreateReviewRequestDto): Promise<ReviewRequestDto> {
+    return httpClient.post('/review-requests', dto)
+  }
+  static async addAssistantOpinion(id: number, opinion: string): Promise<ReviewRequestDto> {
+    return httpClient.post(`/review-requests/${id}/assistant-opinion`, { opinion })
+  }
+  static async decideReviewRequest(id: number, approved: boolean, decisionNote: string): Promise<ReviewRequestDto> {
+    return httpClient.post(`/review-requests/${id}/decide`, { approved, decisionNote })
+  }
+  static async getMyReviewRequests(): Promise<ReviewRequestDto[]> {
+    return httpClient.get('/review-requests/mine')
+  }
+  static async getUcReviewRequests(ucId: number): Promise<ReviewRequestDto[]> {
+    return httpClient.get(`/review-requests/ucs/${ucId}`)
   }
 
   static async errorMessage(error: any): Promise<string> {
