@@ -17,7 +17,7 @@ const navbarItems = computed(() => {
     { name: 'Pessoas', path: '/people', icon: 'mdi-account-group' },
     { name: 'Cursos', path: '/courses', icon: 'mdi-school' },
     { name: 'UCs', path: '/ucs', icon: 'mdi-book-open-variant' },
-    { name: 'Estatísticas', path: '/statistics', icon: 'mdi-chart-bar' }
+    //{ name: 'Estatísticas', path: '/statistics', icon: 'mdi-chart-bar' }
   ]
   if (authStore.isStudent) {
     items.push({ name: 'O Meu Perfil', path: '/my-profile', icon: 'mdi-account-circle' })
