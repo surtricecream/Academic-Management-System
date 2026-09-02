@@ -1,98 +1,41 @@
-# DEI Academic Management System - AcaMS
+# AcaMS — Academic Management System
 
-## Dependencies
+A full-stack academic management platform for university departments: course/curriculum management, role-based access control, grading with weighted averages, group project assignment, and a complete exam-review workflow with multi-stage approval.
 
-- Require download
-  - [Java 21](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
-  - [Maven](https://maven.apache.org/download.cgi)
-  - [Node 14+](https://nodejs.org/en/) ([Node Version Manager](https://github.com/nvm-sh/nvm) recommended)
-  - [Docker](https://www.docker.com/)
-- No download required
-  - [Spring-boot](https://spring.io/)
-  - [Vue.js](https://vuejs.org/)
+Built with **Spring Boot** (Java 21) + **PostgreSQL** on the backend, and **Vue 3** + **TypeScript** + **Vuetify** on the frontend, with **JWT-based authentication** and fine-grained authorization throughout.
 
+🔗 **Live demo:** [link once deployed]
 
-## Run Locally
+## Highlights
 
-Clone the project
+- **Multi-layered authorization** — beyond simple role checks, several endpoints enforce *ownership*-based rules (e.g., only a UC's actual Regente — not just any teacher — can manage its members or grade its evaluations) and *self-or-privileged* access (a student can only view their own profile/grades, unless the requester is an Administrator)
+- **A full approval workflow** — exam grade reviews move through a 4-stage state machine (student request → optional assistant opinion → regente decision → recorded history), with transitions validated server-side at every step
+- **Business-rule enforcement, not just CRUD** — test/project weights are validated against a per-UC budget (can't exceed 100%), group sizes are enforced, duplicate data (emails, course codes, evaluation titles) is rejected with specific, human-readable error messages rather than raw database errors
+- **Clean separation of read/write DTOs** throughout — sensitive fields (like password hashes) are structurally impossible to leak through the API, since read and write shapes are distinct types
 
-```bash
-git clone git@gitlab.rnl.tecnico.ulisboa.pt:<REPO>
-```
+## Screenshots
 
-Go to the project directory
+[add in the future]
 
-```bash
-cd src/
-```
+## Tech Stack
 
-### Database
+**Backend:** Java 21, Spring Boot, Spring Security, Spring Data JPA, PostgreSQL, JWT (jjwt), BCrypt
+**Frontend:** Vue 3 (Composition API), TypeScript, Vuetify, Pinia, Axios
+**Infra:** Docker (local Postgres), [deployment platform once chosen]
 
-To run the database with Docker (recommended), run the following command:
+## Core Features
 
-```bash
-docker compose up
-```
+- **Authentication & Authorization** — JWT login, role-based (`ADMINISTRATOR`, `MAIN_TEACHER`, `TEACHING_ASSISTANT`, `STUDENT`) and ownership-based access control
+- **Course & UC Management** — full CRUD, many-to-many Course↔UC relationships, regente assignment
+- **UC Membership** — enrolling students and assistants, managed by the UC's own regente
+- **Tests & Projects** — creation with weight-budget enforcement, individual or group-based projects, manual or automatic random group assignment
+- **Grading** — per-student or per-group grading, re-gradable, with score validation
+- **Weighted Grade Averages** — computed per-UC, excluding ungraded evaluations rather than treating them as zero
+- **Exam Review Workflow** — student-initiated grade review requests with a full multi-stage approval process
+- **Student Profiles** — a self-service view of enrolled UCs, computed averages, and pending evaluations
 
-Alternatively, you can create services that will be run in the background:
-
-```bash
-docker compose up -d
-```
-
-To stop the database, run the following command:
-
-```bash
-docker compose down
-```
-
-### Backend
-
-Create a copy of the `application-local.properties` file.
-
-```bash
-cp ./backend/src/main/resources/application.properties.example ./backend/src/main/resources/application.properties
-```
-
-If you're running your database using Docker, the datasource variables should match the ones in `Docker-compose.yml`.
-
-To build and run the backend, execute the following commands:
-
-```bash
-cd ./backend
-mvn clean spring-boot:run
-```
-
-## Frontend
-
-Create a copy of the `example.env` file named `.env`.
-
-```bash
-cp ./frontend/example.env ./frontend/.env
-```
-
-Now, you need to install the dependencies:
-
-```bash
-cd ./frontend
-npm i
-```
-
-To run the frontend, run the following command:
-
-```bash
-npm run dev
-```
-
-## Access the Database
-
-In order to access the database, you can use the following command (if you're using the provided Docker Compose file, `PORT` should be `7654`, `USER` should be `postgres` and `DB_NAME` should be `deidb`):
-
-```bash
-psql -h localhost -p <PORT> -U <USER> <DB_NAME>
-```
-
-## Features Implemented
+<details>
+<summary>Full technical breakdown of each feature (click to expand)</summary>
 
 ### Authentication
 - JWT-based login: `POST /auth/login` with email + password, returns a signed token
@@ -114,10 +57,10 @@ psql -h localhost -p <PORT> -U <USER> <DB_NAME>
 ### Evaluations (Tests & Projects)
 - Tests (`/ucs/{ucId}/tests`) and Projects (`/ucs/{ucId}/projects`) are managed by the UC's Regente or an Administrator
 - Projects can be individual or group-based (`isGroupProject`), with an enforced `maxGroupSize`
-- Project groups (`/projects/{projectId}/groups`) can be created manually or auto-assigned randomly among the UC's enrolled students; auto-assignment is a one-time operation and will reject subsequent runs once groups already exist.
+- Project groups (`/projects/{projectId}/groups`) can be created manually or auto-assigned randomly among the UC's enrolled students; auto-assignment is a one-time operation and will reject subsequent runs once groups already exist
 
 ### Grading
-- Grades can be assigned by the UC's Regente, its Assistentes, or an Administrator — a broader set of roles than evaluation creation, matching the spec's distinction between defining an evaluation and grading it
+- Grades can be assigned by the UC's Regente, its Assistentes, or an Administrator — a broader set of roles than evaluation creation, matching the distinction between defining an evaluation and grading it
 - A grade is tied to either a Test or a Project, and either an individual student or a project group, never both — enforced in `GradeService`
 - Re-submitting a grade for the same test/person (or project/group) updates the existing grade rather than creating a duplicate
 - Scores are validated to be within 0–20
@@ -137,5 +80,55 @@ psql -h localhost -p <PORT> -U <USER> <DB_NAME>
 
 ### Student Profile
 - `GET /api/students/{studentId}/profile` — returns enrolled UCs with computed averages, plus pending (ungraded) tests and projects
-- Visible only to the student themselves or an Administrator 
+- Visible only to the student themselves or an Administrator
 - "Projetos submetidos" (submitted project files) tracking was simplified out — the current model tracks grading completeness as a proxy for pending work, not actual file submission state, since no submission/file-upload entity was built
+
+</details>
+
+## Running Locally
+
+### Prerequisites
+- [Java 21](https://www.oracle.com/java/technologies/downloads/#java21)
+- [Maven](https://maven.apache.org/download.cgi)
+- [Node 18+](https://nodejs.org/en/)
+- [Docker](https://www.docker.com/)
+
+### 1. Clone and enter the project
+```bash
+git clone github.com/surtricecream/Academic-Management-System
+cd Academic-Management-System
+```
+
+### 2. Start the database
+```bash
+docker compose up -d
+```
+
+### 3. Backend
+```bash
+cp backend/src/main/resources/application.properties.example backend/src/main/resources/application.properties
+cd backend
+mvn clean spring-boot:run
+```
+
+### 4. Frontend
+```bash
+cp frontend/example.env frontend/.env
+cd frontend
+npm install
+npm run dev
+```
+
+The app will be available at `http://localhost:5173`, connecting to the backend at `http://localhost:8080`.
+
+### Accessing the database directly
+```bash
+psql -h localhost -p 7654 -U postgres deidb
+```
+
+## Known Simplifications
+
+A few intentional scope decisions, documented rather than hidden:
+- No file-upload/submission tracking for project deliverables — the system tracks grading state as a proxy for completion
+- Grade changes from an approved exam review are applied manually, not automatically, since the correct adjustment isn't derivable from the workflow alone
+- Group auto-assignment is a one-time operation per project; re-running it after groups exist is rejected rather than creating duplicates
