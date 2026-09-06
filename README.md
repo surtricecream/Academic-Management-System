@@ -26,7 +26,22 @@ Built with **Spring Boot** (Java 21) + **PostgreSQL** on the backend, and **Vue 
 
 ## Screenshots
 
-[add in the future]
+<details>
+<summary>Click to expand</summary>
+
+### UCs List
+![UCs list](docs/screenshots/UCview.jpeg)
+
+### UC Details
+![UC details](docs/screenshots/UCdetails.jpeg)
+
+### Grading View
+![UC tests grade](docs/screenshots/UCtestsgrade.jpeg)
+
+### Student Profile + grades
+![Student Profile Grades](docs/screenshots/StudentProfileGrades.jpeg)
+
+</details>
 
 ## Tech Stack
 
@@ -106,7 +121,7 @@ Built with **Spring Boot** (Java 21) + **PostgreSQL** on the backend, and **Vue 
 
 ### 1. Clone and enter the project
 ```bash
-git clone github.com/surtricecream/Academic-Management-System
+git clone https://github.com/surtricecream/Academic-Management-System.git
 cd Academic-Management-System
 ```
 
