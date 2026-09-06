@@ -4,7 +4,18 @@ A full-stack academic management platform for university departments: course/cur
 
 Built with **Spring Boot** (Java 21) + **PostgreSQL** on the backend, and **Vue 3** + **TypeScript** + **Vuetify** on the frontend, with **JWT-based authentication** and fine-grained authorization throughout.
 
-🔗 **Live demo:** [link once deployed]
+## Live Demo
+
+🔗 [https://acams-ist.vercel.app](https://acams-ist.vercel.app)
+
+> **Note:** All accounts below are seeded demo data for testing purposes only — they do not correspond to real IST students, staff, or email addresses.
+
+| Role | Email | Password |
+|---|---|---|
+| Administrator | admin@tecnico.ulisboa.pt | admin123 |
+| Regente (Professor) | prof.silva@tecnico.ulisboa.pt | prof123 |
+| Teaching Assistant | ana.ferreira@tecnico.ulisboa.pt | pass123 |
+| Student | alice@tecnico.ulisboa.pt | pass123 |
 
 ## Highlights
 
@@ -21,7 +32,7 @@ Built with **Spring Boot** (Java 21) + **PostgreSQL** on the backend, and **Vue 
 
 **Backend:** Java 21, Spring Boot, Spring Security, Spring Data JPA, PostgreSQL, JWT (jjwt), BCrypt
 **Frontend:** Vue 3 (Composition API), TypeScript, Vuetify, Pinia, Axios
-**Infra:** Docker (local Postgres), [deployment platform once chosen]
+**Infra:** Docker (local Postgres), Vercel (frontend), Render (backend)
 
 ## Core Features
 
