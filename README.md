@@ -8,6 +8,7 @@ Built with **Spring Boot** (Java 21) + **PostgreSQL** on the backend, and **Vue 
 
 🔗 [https://acams-ist.vercel.app](https://acams-ist.vercel.app)
 
+> ⚠️ **Note:** the backend is hosted on Render's free tier, which spins down after inactivity. The first request may take 30–60 seconds to wake it up — please be patient on first load!
 > **Note:** All accounts below are seeded demo data for testing purposes only — they do not correspond to real IST students, staff, or email addresses.
 
 | Role | Email | Password |
